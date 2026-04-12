@@ -95,6 +95,7 @@
 .password-eye {
   color: #b5b5b5;
   font-size: 15px;
+  cursor: pointer;
 }
 
 .agreement-row {
@@ -119,9 +120,33 @@
   border-radius: 14px;
   background: #8b76e8;
   color: #fff;
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 600;
   cursor: pointer;
+}
+
+.auth-submit:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.auth-message {
+  margin: 4px 0 0;
+  max-width: 500px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.auth-message.is-error {
+  color: #b23056;
+}
+
+.auth-message.is-success {
+  color: #2f7b4b;
+}
+
+.auth-message.is-hidden {
+  display: none;
 }
 
 .auth-divider {
@@ -219,6 +244,10 @@
 }
 
 .auth-right-singup {
+  background-image: url("../resources/img/pexels-andreas-schnabl-1775843-16573356.jpg");
+}
+
+.auth-right-signup {
   background-image: url("../resources/img/pexels-andreas-schnabl-1775843-16573356.jpg");
 }
 

@@ -194,6 +194,19 @@
   background: #fff;
   color: #e27e92;
   font-size: 20px;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.pet-action-fav.is-active {
+  background: #d94f7b;
+  border-color: #d94f7b;
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(217, 79, 123, 0.32);
+}
+
+.pet-action-fav.is-loading {
+  opacity: 0.7;
+  pointer-events: none;
 }
 
 .sponsor-banner {

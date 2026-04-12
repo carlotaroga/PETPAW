@@ -98,6 +98,197 @@ section {
   font-weight: 500;
 }
 
+.navbar [data-navbar-auth] {
+  position: relative;
+}
+
+.navbar-auth-guest {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar-auth-btn {
+  min-width: 132px;
+  white-space: nowrap;
+}
+
+.navbar-auth-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-favorites-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #e5e1f7;
+  background: #fff;
+  color: var(--extra-dark-purple);
+  font-weight: 500;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.navbar-favorites-link:hover {
+  border-color: #cfc5f3;
+  box-shadow: 0 6px 18px rgba(34, 24, 66, 0.08);
+}
+
+.navbar-favorites-link.is-active {
+  background: #efe9ff;
+  border-color: #cfc5f3;
+  color: #5f48bf;
+}
+
+.navbar-profile-wrapper {
+  position: relative;
+}
+
+.navbar-profile-trigger {
+  border: 1px solid #e5e1f7;
+  background: #fff;
+  color: var(--extra-dark-purple);
+  border-radius: 12px;
+  min-height: 44px;
+  padding: 8px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.navbar-profile-trigger:hover,
+.navbar-profile-trigger.is-open {
+  border-color: #cfc5f3;
+  box-shadow: 0 6px 18px rgba(34, 24, 66, 0.08);
+}
+
+.navbar-profile-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  background: #f2edff;
+  color: #684fcf;
+}
+
+.navbar-profile-chevron {
+  font-size: 12px;
+  color: #8c83af;
+}
+
+.navbar-profile-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: min(360px, 88vw);
+  border-radius: 18px;
+  border: 1px solid #e9e4fa;
+  background: #fff;
+  box-shadow: 0 18px 40px rgba(25, 18, 47, 0.16);
+  padding: 14px;
+  z-index: 1060;
+}
+
+.navbar-dropdown-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #f1eef9;
+}
+
+.navbar-dropdown-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #8d78e6;
+  color: #fff;
+  display: inline-grid;
+  place-items: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.navbar-dropdown-name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #242033;
+}
+
+.navbar-dropdown-email {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: #7f779b;
+}
+
+.navbar-profile-warning {
+  margin: 0 0 12px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #fff6e8;
+  color: #8a6120;
+  font-size: 12px;
+}
+
+.navbar-dropdown-section {
+  margin-top: 8px;
+}
+
+.navbar-dropdown-section-title {
+  margin: 0 0 8px;
+  padding: 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #8f87aa;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.navbar-dropdown-item {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: #322b4f;
+  text-decoration: none;
+  padding: 10px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.navbar-dropdown-item span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navbar-dropdown-item i:last-child {
+  color: #9f98bb;
+  font-size: 12px;
+}
+
+.navbar-dropdown-item:hover {
+  background: #f7f4ff;
+}
+
+.navbar-dropdown-item-logout {
+  color: #7d2a41;
+}
+
+.petpaw-admin-mode {
+  --admin-accent: #2f4fcd;
+}
+
 .btn-base {
   display: inline-flex;
   align-items: center;
@@ -482,6 +673,30 @@ footer {
   .footer-bottom {
     flex-direction: column;
     gap: 10px;
+  }
+}
+
+@media (max-width: 992px) {
+  .navbar-auth-guest,
+  .navbar-auth-user {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .navbar-profile-trigger {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .navbar-favorites-link {
+    justify-content: center;
+  }
+
+  .navbar-profile-dropdown {
+    position: static;
+    width: 100%;
+    margin-top: 10px;
   }
 }
 

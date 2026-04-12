@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro | PETPAW</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body class="auth-page">
+  <main class="auth-shell">
+    <section class="auth-left">
+      <h1 class="auth-title">¡Comienza ahora!</h1>
+      <p class="auth-subtitle">Completa la informacion necesaria</p>
+
+      <form id="signup-form" class="auth-form" action="#" method="post" novalidate>
+        <div>
+          <label class="form-label" for="signup-name">Nombre</label>
+          <input class="form-input" id="signup-name" type="text" placeholder="Ingresa tu nombre" autocomplete="given-name" required />
+        </div>
+
+        <div>
+          <label class="form-label" for="signup-lastname">Apellidos</label>
+          <input class="form-input" id="signup-lastname" type="text" placeholder="Ingresa tus apellidos" autocomplete="family-name" required />
+        </div>
+
+        <div>
+          <label class="form-label" for="signup-email">Correo electronico</label>
+          <input class="form-input" id="signup-email" type="email" placeholder="email@gmail.com" autocomplete="email" required />
+        </div>
+
+        <div>
+          <label class="form-label" for="signup-phone">Numero de telefono</label>
+          <input class="form-input" id="signup-phone" type="tel" placeholder="+34 622 22 22 22" autocomplete="tel" required />
+        </div>
+
+        <div>
+          <label class="form-label" for="signup-password">Contrasena</label>
+          <div class="input-wrap">
+            <input id="signup-password" type="password" placeholder="Ingresa tu contrasena" autocomplete="new-password" required />
+            <i class="bi bi-eye password-eye" data-password-toggle aria-label="Mostrar u ocultar contrasena"></i>
+          </div>
+        </div>
+
+        <label class="agreement-row" for="signup-terms">
+          <input id="signup-terms" type="checkbox" />
+          <span>Estoy de acuerdo con los terminos y condiciones</span>
+        </label>
+
+        <button class="auth-submit" type="submit">Registrarse</button>
+        <p id="signup-message" class="auth-message is-hidden" role="alert" aria-live="polite"></p>
+      </form>
+
+      <div class="auth-divider">o</div>
+
+      <div class="social-row">
+        <button class="social-btn" type="button"><span class="google-icon">G</span> Sign in with Google</button>
+        <button class="social-btn" type="button"><i class="bi bi-apple"></i> Sign in with Apple</button>
+      </div>
+
+      <p class="auth-hint">Ya tienes una cuenta? <a href="login.html">Iniciar sesion</a></p>
+    </section>
+
+    <section class="auth-right auth-right-signup">
+      <h2 class="auth-brand">PETPAW</h2>
+      <p class="auth-overlay-title">Alguien te estara esperando...</p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth-shared.js"></script>
+  <script src="signup.js"></script>
+</body>
+</html>

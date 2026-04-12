@@ -16,26 +16,22 @@
       <h1 class="auth-title">Bienvenido de nuevo</h1>
       <p class="auth-subtitle">Ingresa tus credenciales</p>
 
-      <form class="auth-form" action="#" method="post">
+      <form id="login-form" class="auth-form" action="#" method="post" novalidate>
         <div>
           <label class="form-label" for="login-email">Correo electronico</label>
-          <input class="form-input" id="login-email" type="email" placeholder="email@gmail.com" />
+          <input class="form-input" id="login-email" type="email" placeholder="email@gmail.com" autocomplete="email" required />
         </div>
 
         <div>
           <label class="form-label" for="login-password">Contrasena</label>
           <div class="input-wrap">
-            <input id="login-password" type="password" placeholder="Ingresa tu contrasena" />
-            <i class="bi bi-eye password-eye"></i>
+            <input id="login-password" type="password" placeholder="Ingresa tu contrasena" autocomplete="current-password" required />
+            <i class="bi bi-eye password-eye" data-password-toggle aria-label="Mostrar u ocultar contrasena"></i>
           </div>
         </div>
 
-        <label class="agreement-row" for="login-terms">
-          <input id="login-terms" type="checkbox" />
-          <span>Estoy de acuerdo con los terminos y condiciones</span>
-        </label>
-
-        <button class="auth-submit" type="submit">Registrarse</button>
+        <button class="auth-submit" type="submit">Iniciar sesion</button>
+        <p id="login-message" class="auth-message is-hidden" role="alert" aria-live="polite"></p>
       </form>
 
       <div class="auth-divider">o</div>
@@ -45,7 +41,7 @@
         <button class="social-btn" type="button"><i class="bi bi-apple"></i> Sign in with Apple</button>
       </div>
 
-      <p class="auth-hint">¿No tienes una cuenta? <a href="singup.html">Registrarse</a></p>
+      <p class="auth-hint">No tienes una cuenta? <a href="signup.html">Registrarse</a></p>
     </section>
 
     <section class="auth-right auth-right-login">
@@ -53,5 +49,10 @@
       <p class="auth-overlay-title">Animate a aumentar tu familia</p>
     </section>
   </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth-shared.js"></script>
+  <script src="login.js"></script>
 </body>
 </html>

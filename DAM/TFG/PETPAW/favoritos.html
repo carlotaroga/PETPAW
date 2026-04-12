@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Favoritos | PETPAW</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/favoritos.css" />
+</head>
+<body class="has-fixed-navbar page-favorites">
+  <nav class="navbar navbar-expand-lg bg-light fixed-top">
+    <div class="container-fluid px-5">
+      <a class="navbar-brand" href="index.html">PETPAW</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasNavbarLabel">PETPAW</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <ul class="navbar-nav justify-content-end flex-grow-1 pe-5 gap-4">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="adopta.html">Adopta</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="nosotros.html">Nosotros</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="contacto.html">Contacto</a>
+            </li>
+          </ul>
+          <div class="d-flex mt-3 mt-lg-0" data-navbar-auth></div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page-wrap favorites-main">
+    <section class="favorites-hero">
+      <div>
+        <h1>Aqui estan tus favoritos</h1>
+        <p>Cientos de perros y gatos esperan un hogar en protectoras de toda Espana. Aqui se encuentra tu futura mascota.</p>
+      </div>
+    </section>
+
+    <section class="favorites-section">
+      <div id="favorites-feedback" class="favorites-feedback" aria-live="polite"></div>
+
+      <div id="favorites-empty" class="favorites-empty" hidden>
+        <i class="bi bi-heart"></i>
+        <h2>Aun no tienes favoritos</h2>
+        <p>Explora mascotas y guarda las que te enamoren para verlas aqui.</p>
+        <a class="favorites-empty-btn" href="adopta.html">Ir a adopta</a>
+      </div>
+
+      <template id="favorite-card-template">
+        <article class="favorite-card">
+          <div class="favorite-media">
+            <span class="favorite-status" data-status></span>
+            <button class="favorite-remove" type="button" data-remove aria-label="Quitar de favoritos">
+              <i class="bi bi-heart-fill"></i>
+            </button>
+            <img data-image alt="Mascota favorita" />
+          </div>
+          <div class="favorite-body">
+            <div class="favorite-title-row">
+              <p class="favorite-name" data-name></p>
+              <span class="favorite-sex" data-sex aria-label="Sexo"></span>
+            </div>
+            <p class="favorite-meta" data-meta></p>
+            <p class="favorite-species" data-species></p>
+          </div>
+        </article>
+      </template>
+
+      <div id="favorites-grid" class="favorites-grid"></div>
+      <div id="favorites-pagination" class="favorites-pagination"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="page-wrap">
+      <div class="footer-grid">
+        <div>
+          <div class="logo mb-2">PETPAW</div>
+          <p class="section-subtitle">
+            Hacemos posible la conexion entre familias y mascotas que buscan un
+            hogar amoroso.
+          </p>
+        </div>
+        <div class="footer-col">
+          <h4>Nuestra mision</h4>
+          <a href="nosotros.html">Quienes somos</a>
+          <a href="index.html#servicios">Programas</a>
+          <a href="adopta.html">Adopta</a>
+        </div>
+        <div class="footer-col">
+          <h4>Servicios</h4>
+          <a href="index.html#servicios">Donaciones</a>
+          <a href="involucrate.html">Voluntariado</a>
+          <a href="index.html#contacto">Soporte</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contacto</h4>
+          <a href="index.html#contacto">Contactanos</a>
+          <a href="index.html#contacto">Preguntas frecuentes</a>
+          <a href="index.html#contacto">Ubicacion</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>(c) 2026 PETPAW. Todos los derechos reservados.</span>
+        <span>politicas y privacidad</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth-shared.js"></script>
+  <script src="favorites-service.js"></script>
+  <script src="navbar-user.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="favoritos.js"></script>
+</body>
+</html>
