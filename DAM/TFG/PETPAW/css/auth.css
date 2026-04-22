@@ -52,6 +52,43 @@
   color: #353535;
 }
 
+.form-label-inline {
+  margin-bottom: 10px;
+}
+
+.account-type-group {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  max-width: 500px;
+}
+
+.account-type-options {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.account-type-option {
+  min-width: 108px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid #dfdfdf;
+  background: #f8f8f8;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #3f3f3f;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.account-type-option input {
+  margin: 0;
+}
+
 .form-input,
 .input-wrap {
   width: 100%;
@@ -69,6 +106,12 @@
 
 .form-input::placeholder {
   color: #c1c1c1;
+}
+
+.form-select {
+  padding: 0 14px;
+  color: #3f3f3f;
+  appearance: none;
 }
 
 .input-wrap {

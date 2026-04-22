@@ -20,7 +20,7 @@
   const passwordInput = document.getElementById('login-password');
   const submitButton = form.querySelector('button[type="submit"]');
   const messageBox = document.getElementById('login-message');
-  const redirectTarget = helpers.getRedirectTarget('index.html');
+  const requestedRedirect = helpers.getRedirectTarget('');
 
   function showMessage(text, type) {
     if (!messageBox) return;
@@ -55,14 +55,28 @@
   }
 
   async function redirectIfLoggedIn() {
-    const { data, error } = await supabaseClient.auth.getSession();
-    if (error) {
-      console.error('[PETPAW] Error leyendo sesion:', error.message);
-      return;
-    }
+    try {
+      const profile = await helpers.getCurrentUserProfile(supabaseClient);
+      if (!profile) {
+        return;
+      }
 
-    if (data.session?.user) {
-      window.location.replace(redirectTarget);
+      const destination = helpers.resolvePostLoginTarget(profile.role, requestedRedirect);
+      window.location.replace(destination);
+    } catch (error) {
+      console.error('[PETPAW] Error leyendo sesion:', error.message);
+    }
+  }
+
+  async function redirectAfterLogin(authUser) {
+    try {
+      const profile = await helpers.getCurrentUserProfile(supabaseClient);
+      const role = profile?.role || authUser?.user_metadata?.role || 'client';
+      const destination = helpers.resolvePostLoginTarget(role, requestedRedirect);
+      window.location.href = destination;
+    } catch (error) {
+      console.error('[PETPAW] No se pudo resolver el perfil tras login:', error.message);
+      window.location.href = helpers.getHomePathForRole(authUser?.user_metadata?.role || 'client');
     }
   }
 
@@ -95,14 +109,14 @@
           console.error('[PETPAW] No se pudo sincronizar perfil:', syncProfile.error?.message || syncProfile.reason);
           showMessage('Sesion iniciada. Aviso: no se pudo sincronizar el perfil en users, revisa RLS.', 'success');
           setTimeout(() => {
-            window.location.href = redirectTarget;
+            redirectAfterLogin(authUser);
           }, 900);
           return;
         }
       }
 
       showMessage('Sesion iniciada correctamente. Redirigiendo...', 'success');
-      window.location.href = redirectTarget;
+      await redirectAfterLogin(authUser);
     } catch (error) {
       showMessage(helpers.formatAuthError(error), 'error');
     } finally {

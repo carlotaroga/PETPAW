@@ -19,13 +19,32 @@ function resolveSupabaseClient() {
   }
 
   if (window.supabase?.createClient) {
-    return window.supabase.createClient(fallbackSupabaseUrl, fallbackSupabaseKey)
+    return window.supabase.createClient(fallbackSupabaseUrl, fallbackSupabaseKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true
+      }
+    })
   }
 
   return null
 }
 
 const supabaseClient = resolveSupabaseClient()
+
+async function getCurrentAccessToken() {
+  if (!supabaseClient?.auth?.getSession) {
+    return null
+  }
+
+  const { data, error } = await supabaseClient.auth.getSession()
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  return data?.session?.access_token ?? null
+}
 
 const fallbackImages = [
   'resources/img/pexels-miami302-16676324.jpg',
@@ -44,6 +63,11 @@ const favoriteState = {
   isFavorite: false,
   isLoading: false,
   messageTimer: null
+}
+
+const adoptionState = {
+  currentPet: null,
+  isSubmitting: false
 }
 
 const elements = {
@@ -120,8 +144,8 @@ function showTransientState(message, isError = false) {
 
 function formatAge(age) {
   if (!Number.isFinite(age)) return 'Sin edad'
-  if (age === 1) return '1 ano'
-  return `${age} anos`
+  if (age === 1) return '1 año'
+  return `${age} años`
 }
 
 function formatSexLabel(sex) {
@@ -137,11 +161,18 @@ function setGenderIcon(sex) {
 
   if (sex === true) {
     elements.genderIcon.classList.add('bi-gender-male')
+    elements.genderIcon.classList.add('is-male')
   } else if (sex === false) {
     elements.genderIcon.classList.add('bi-gender-female')
+    elements.genderIcon.classList.add('is-female')
   } else {
     elements.genderIcon.classList.add('bi-gender-ambiguous')
+    elements.genderIcon.classList.add('is-unknown')
   }
+}
+
+function shouldShowStatusBadge(statusName) {
+  return String(statusName || '').trim().toLowerCase() === 'adoptado'
 }
 
 function setFavoriteVisual(isFavorite) {
@@ -474,7 +505,7 @@ async function fetchPetById(petId) {
       status (name),
       sizes (name),
       species (name),
-      shelters (id, name, email, address, city, province_id, community_id)
+      shelters (id, name, email, address, province_id, community_id)
     `)
     .eq('id', petId)
     .maybeSingle()
@@ -513,6 +544,9 @@ function renderPet(pet, provinceName, communityName) {
   const statusName = normalizeRelation(pet?.status)?.name || ''
   const shelter = normalizeRelation(pet?.shelters)
 
+  // Guardar la mascota actual para el modal de adopción
+  adoptionState.currentPet = pet
+
   if (elements.name) elements.name.textContent = petName
   if (elements.breed) elements.breed.textContent = pet?.breed || 'Sin raza'
   if (elements.age) elements.age.textContent = formatAge(pet?.age)
@@ -523,13 +557,14 @@ function renderPet(pet, provinceName, communityName) {
   }
 
   if (elements.status) {
-    elements.status.textContent = statusName
-    elements.status.classList.toggle('is-empty', !statusName)
+    const showStatus = shouldShowStatusBadge(statusName)
+    elements.status.textContent = showStatus ? statusName : ''
+    elements.status.classList.toggle('is-empty', !showStatus)
   }
 
   setGenderIcon(pet?.sex)
 
-  const locationParts = [shelter?.city, provinceName, communityName]
+  const locationParts = [shelter?.address, provinceName, communityName]
     .filter((value) => String(value || '').trim().length > 0)
 
   if (elements.shelterName) {
@@ -610,3 +645,126 @@ async function initPetCard() {
 }
 
 window.addEventListener('DOMContentLoaded', initPetCard)
+
+// Funciones para el modal de adopción
+function initAdoptionModal() {
+  const openAdoptionModalBtn = document.getElementById('openAdoptionModalBtn')
+  const adoptionForm = document.getElementById('adoptionForm')
+  const requiredAdoptionMessage = document.getElementById('requiredAdoptionMessage')
+  const extraAdoptionMessage = document.getElementById('extraAdoptionMessage')
+  const adoptionFormState = document.getElementById('adoptionFormState')
+  const submitAdoptionBtn = document.getElementById('submitAdoptionBtn')
+
+  const adoptionModalElement = document.getElementById('adoptionModal')
+  const adoptionModal = adoptionModalElement ? new bootstrap.Modal(adoptionModalElement) : null
+
+  openAdoptionModalBtn?.addEventListener('click', async () => {
+    const { data, error } = await supabaseClient.auth.getUser()
+
+    if (error || !data?.user) {
+      alert('Debes iniciar sesión para solicitar una adopción.')
+      window.location.href = 'login.html'
+      return
+    }
+
+    if (!adoptionState.currentPet) {
+      alert('No se ha podido cargar la información de la mascota.')
+      return
+    }
+
+    const baseMessage = `Hola! Estoy interesad@ en ${adoptionState.currentPet.name}`
+    requiredAdoptionMessage.textContent = baseMessage
+    extraAdoptionMessage.value = ''
+    adoptionFormState.textContent = ''
+    adoptionFormState.className = 'small mt-3'
+
+    adoptionModal?.show()
+  })
+
+  adoptionForm?.addEventListener('submit', async (e) => {
+    e.preventDefault()
+
+    const { data: authData, error: authError } = await supabaseClient.auth.getUser()
+
+    if (authError || !authData?.user) {
+      adoptionFormState.textContent = 'Debes iniciar sesión para continuar.'
+      adoptionFormState.className = 'small mt-3 text-danger'
+      return
+    }
+
+    if (!adoptionState.currentPet) {
+      adoptionFormState.textContent = 'No se encontró la mascota seleccionada.'
+      adoptionFormState.className = 'small mt-3 text-danger'
+      return
+    }
+
+    if (adoptionState.isSubmitting) return
+
+    try {
+      adoptionState.isSubmitting = true
+      submitAdoptionBtn.disabled = true
+      adoptionFormState.textContent = 'Enviando solicitud...'
+      adoptionFormState.className = 'small mt-3 text-muted'
+
+      const baseMessage = `Hola! Estoy interesad@ en ${adoptionState.currentPet.name}`
+      const extraMessage = extraAdoptionMessage.value.trim()
+
+      const finalMessage = extraMessage
+        ? `${baseMessage}\n\n${extraMessage}`
+        : baseMessage
+
+      const { data: requestInserted, error: requestError } = await supabaseClient
+      .from("adoption_requests")
+      .insert([
+        {
+          user_id: authData.user.id,
+          pet_id: adoptionState.currentPet.id,
+          message: finalMessage,
+          status: "en_espera",
+        },
+      ])
+      .select()
+      .single();
+
+      if (requestError) throw requestError
+
+      const accessToken = await getCurrentAccessToken()
+      if (!accessToken) {
+        throw new Error('No se ha encontrado una sesion valida para enviar la solicitud.')
+      }
+
+      const { error: functionError } = await supabaseClient.functions.invoke(
+        'send-adoption-request-email',
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          },
+          body: {
+            adoptionRequestId: requestInserted.id
+          }
+        }
+      )
+
+      if (functionError) throw functionError
+
+      adoptionFormState.textContent = 'Solicitud enviada correctamente.'
+      adoptionFormState.className = 'small mt-3 text-success'
+
+      setTimeout(() => {
+        adoptionModal?.hide()
+      }, 1200)
+    } catch (err) {
+      console.error('Error enviando solicitud de adopción:', err)
+      adoptionFormState.textContent = 'Ha ocurrido un error al enviar la solicitud.'
+      adoptionFormState.className = 'small mt-3 text-danger'
+    } finally {
+      adoptionState.isSubmitting = false
+      submitAdoptionBtn.disabled = false
+    }
+  })
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  initPetCard()
+  initAdoptionModal()
+})

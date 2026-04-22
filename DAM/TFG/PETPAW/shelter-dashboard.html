@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel shelter | PETPAW</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="css/shelter.css" />
+</head>
+<body class="shelter-page">
+  <main class="shelter-shell">
+    <section class="shelter-hero">
+      <div>
+        <p class="shelter-kicker">Panel privado</p>
+        <h1 class="shelter-title">Gestiona las mascotas de tu protectora</h1>
+        <p class="shelter-subtitle">
+          Crea, actualiza o elimina fichas de forma sencilla. Solo veras las mascotas asociadas a tu shelter.
+        </p>
+      </div>
+
+      <div class="shelter-hero-card">
+        <p class="hero-card-label">Protectora</p>
+        <h2 id="shelterName">Cargando...</h2>
+        <p id="shelterMeta" class="hero-card-meta">Preparando panel</p>
+        <div class="hero-card-actions">
+          <button id="newPetButton" class="btn-primary" type="button">
+            <i class="bi bi-plus-lg"></i>
+            Nueva mascota
+          </button>
+          <button id="logoutButton" class="btn-secondary" type="button">
+            <i class="bi bi-box-arrow-right"></i>
+            Cerrar sesion
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="shelter-grid">
+      <aside class="shelter-sidebar">
+        <article class="sidebar-card">
+          <p class="sidebar-label">Cuenta</p>
+          <h3 id="managerName">Cargando...</h3>
+          <p id="managerEmail" class="sidebar-text">...</p>
+          <p id="managerPhone" class="sidebar-text">...</p>
+        </article>
+
+        <article class="sidebar-card">
+          <p class="sidebar-label">Resumen</p>
+          <div class="metric-list">
+            <div class="metric-item">
+              <span>Total mascotas</span>
+              <strong id="metricTotal">0</strong>
+            </div>
+            <div class="metric-item">
+              <span>Total adoptadas</span>
+              <strong id="metricWithStatus">0</strong>
+            </div>
+          </div>
+        </article>
+
+        <article class="sidebar-card">
+          <p class="sidebar-label">Ayuda rapida</p>
+          <ul class="sidebar-list">
+            <li>Usa "Nueva mascota" para crear una ficha.</li>
+            <li>Edita cualquier mascota desde su tarjeta.</li>
+            <li>El borrado elimina la mascota de tu shelter.</li>
+          </ul>
+        </article>
+      </aside>
+
+      <section class="shelter-content">
+        <div class="content-header">
+          <div>
+            <p class="content-kicker">Mascotas</p>
+            <h2>Tus publicaciones</h2>
+          </div>
+          <p id="dashboardState" class="dashboard-state" aria-live="polite"></p>
+        </div>
+
+        <div id="petsEmptyState" class="empty-state" hidden>
+          <i class="bi bi-heart"></i>
+          <h3>Aun no has creado mascotas</h3>
+          <p>Empieza creando la primera ficha para que aparezca en el panel.</p>
+          <button class="btn-primary" type="button" data-open-form>
+            <i class="bi bi-plus-lg"></i>
+            Crear primera mascota
+          </button>
+        </div>
+
+        <div id="petsList" class="pets-list"></div>
+      </section>
+    </section>
+  </main>
+
+  <div id="petFormModal" class="modal-shell" hidden>
+    <div class="modal-backdrop" data-close-form></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="petFormTitle">
+      <div class="modal-header">
+        <div>
+          <p class="content-kicker">Formulario</p>
+          <h2 id="petFormTitle">Nueva mascota</h2>
+        </div>
+        <button class="icon-button" type="button" aria-label="Cerrar formulario" data-close-form>
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <form id="petForm" class="pet-form" novalidate>
+        <div class="form-grid">
+          <label class="field-group">
+            <span>Nombre</span>
+            <input id="petName" type="text" maxlength="120" required />
+          </label>
+
+          <label class="field-group">
+            <span>Sexo</span>
+            <select id="petSex">
+              <option value="">Sin especificar</option>
+              <option value="male">Macho</option>
+              <option value="female">Hembra</option>
+            </select>
+          </label>
+
+          <label class="field-group">
+            <span>Edad</span>
+            <input id="petAge" type="number" min="0" step="1" required />
+          </label>
+
+          <label class="field-group">
+            <span>Raza</span>
+            <input id="petBreed" type="text" maxlength="120" />
+          </label>
+
+          <label class="field-group">
+            <span>Tamano</span>
+            <select id="petSize" required></select>
+          </label>
+
+          <label class="field-group">
+            <span>Estado</span>
+            <select id="petStatus" required></select>
+          </label>
+
+          <label class="field-group">
+            <span>Especie</span>
+            <select id="petSpecies" required></select>
+          </label>
+        </div>
+
+        <label class="field-group field-group-full">
+          <span>Descripcion</span>
+          <textarea id="petDescription" rows="5" maxlength="3000"></textarea>
+        </label>
+
+        <section class="field-group field-group-full">
+          <span>Fotos</span>
+          <label class="upload-dropzone" for="petImagesInput">
+            <input id="petImagesInput" type="file" accept="image/*" multiple hidden />
+            <strong>Anade fotos</strong>
+            <small>Selecciona una o varias imagenes para esta mascota.</small>
+          </label>
+
+          <div>
+            <p class="image-section-title">Fotos actuales</p>
+            <div id="existingImagesList" class="image-grid image-grid-existing">
+              <p class="image-empty">No hay fotos guardadas todavia.</p>
+            </div>
+          </div>
+
+          <div>
+            <p class="image-section-title">Nuevas fotos</p>
+            <div id="pendingImagesList" class="image-grid">
+              <p class="image-empty">No has seleccionado imagenes nuevas.</p>
+            </div>
+          </div>
+        </section>
+
+        <p id="formState" class="form-state" aria-live="polite"></p>
+
+        <div class="modal-actions">
+          <button class="btn-secondary" type="button" data-close-form>Cancelar</button>
+          <button id="savePetButton" class="btn-primary" type="submit">Guardar mascota</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/auth-shared.js"></script>
+  <script src="js/shelter-dashboard.js"></script>
+</body>
+</html>

@@ -13,9 +13,9 @@
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/adopta.css" />
 </head>
-<body class="has-fixed-navbar">
-  <nav class="navbar navbar-expand-lg bg-light fixed-top">
-    <div class="container-fluid px-5">
+<body class="page-home has-fixed-navbar">
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container-fluid">
       <a class="navbar-brand" href="index.html">PETPAW</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -23,18 +23,18 @@
       <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
         <div class="offcanvas-header">
           <h5 class="offcanvas-title" id="offcanvasNavbarLabel">PETPAW</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-          <ul class="navbar-nav justify-content-end flex-grow-1 pe-5 gap-4">
+          <ul class="navbar-nav justify-content-center flex-grow-1 gap-lg-4">
             <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="adopta.html">Adopta</a>
+              <a class="nav-link" href="index.html">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="nosotros.html">Nosotros</a>
+              <a class="nav-link is-active" aria-current="page" href="adopta.html">Adopta</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="contacto.html">Contacto</a>
+              <a class="nav-link" href="index.html#contacto">Contacto</a>
             </li>
           </ul>
           <div class="d-flex mt-3 mt-lg-0" data-navbar-auth></div>
@@ -43,10 +43,10 @@
     </div>
   </nav>
 
-  <main class="container">
+  <main class="page-wrap adopta-main">
     <section class="adopta-hero">
       <div>
-        <h1>Mascotas en adopcion</h1>
+        <h1>Mascotas en <span class="title-accent">adopcion</span></h1>
         <p>
           Cientos de perros y gatos esperan un hogar protector y responsable.
           Filtra por ubicacion y caracteristicas para encontrar a tu nuevo amigo.
@@ -101,58 +101,56 @@
 
       <div class="adopta-grid" id="adopta-grid"></div>
 
-      <div class="pagination">
-        <span class="page">1</span>
-        <span>2</span>
-        <span>3</span>
-        <span>></span>
-      </div>
+      <nav class="pagination" id="adopta-pagination" aria-label="Paginacion de mascotas" hidden></nav>
     </section>
   </main>
 
-   <footer>
-    <div class="page-wrap">
-      <div class="footer-grid">
-        <div>
-          <div class="logo mb-2">
-            PETPAW
-          </div>
-          <p class="section-subtitle">
-            Hacemos posible la conexion entre familias y mascotas que buscan un
-            hogar amoroso.
-          </p>
-        </div>
-        <div class="footer-col">
-          <h4>Nuestra mision</h4>
-          <a href="#nosotros">Quienes somos</a>
-          <a href="#servicios">Programas</a>
-          <a href="#adoptar">Adopta</a>
-        </div>
-        <div class="footer-col">
-          <h4>Servicios</h4>
-          <a href="#servicios">Donaciones</a>
-          <a href="#servicios">Voluntariado</a>
-          <a href="#contacto">Soporte</a>
-        </div>
-        <div class="footer-col">
-          <h4>Contacto</h4>
-          <a href="#contacto">Contactanos</a>
-          <a href="#contacto">Preguntas frecuentes</a>
-          <a href="#contacto">Ubicacion</a>
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-mark">P</div>
+        <div class="footer-brand-copy">
+          <strong>PETPAW</strong>
         </div>
       </div>
-      <div class="footer-bottom">
-        <span>(c) 2026 PETPAW. Todos los derechos reservados.</span>
-        <span>politicas y privacidad</span>
+
+      <div class="footer-col">
+        <h4>Adopta</h4>
+        <a href="adopta.html">Mascotas disponibles</a>
+        <a href="index.html#adoptar">Guia de tallas</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Involucrate</h4>
+        <a href="index.html#servicios">Voluntariado</a>
+        <a href="index.html#servicios">Maneras de apoyar</a>
+        <a href="index.html#contacto">Preguntas frecuentes</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Compania</h4>
+        <a href="index.html#nosotros">Sobre nosotros</a>
+        <a href="index.html#contacto">Contactanos</a>
+        <a href="#">Politica de privacidad</a>
+        <a href="#">Terminos de servicio</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>&copy; PetPaw 2026. All Right Reserved.</span>
+      <div class="footer-socials">
+        <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+        <a href="#" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+        <a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
       </div>
     </div>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="supabase-config.js"></script>
-  <script src="auth-shared.js"></script>
-  <script src="navbar-user.js"></script>
-  <script src="adopta-filters.js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/auth-shared.js"></script>
+  <script src="js/navbar-user.js"></script>
+  <script src="js/adopta-filters.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

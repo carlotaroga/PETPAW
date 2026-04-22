@@ -49,6 +49,8 @@ let lookups = {
   species: [],
   sizes: []
 }
+const PETS_PER_PAGE = 6
+let currentPage = 1
 
 function safeNumber(value) {
   const parsed = Number(value)
@@ -190,7 +192,7 @@ function renderPets(pets) {
 
     if (badge) {
       const status = pet.status_name
-      if (status) {
+      if (status && String(status).trim().toLowerCase() !== 'disponible') {
         badge.textContent = status
       } else {
         badge.remove()
@@ -234,6 +236,98 @@ function renderPets(pets) {
       grid.appendChild(card)
     }
   })
+}
+
+function getPaginationElement() {
+  return document.getElementById('adopta-pagination')
+}
+
+function getTotalPages(totalItems) {
+  return Math.max(1, Math.ceil(totalItems / PETS_PER_PAGE))
+}
+
+function getPaginationState(pets) {
+  const totalItems = pets.length
+  const totalPages = getTotalPages(totalItems)
+
+  if (currentPage > totalPages) {
+    currentPage = totalPages
+  }
+
+  const startIndex = (currentPage - 1) * PETS_PER_PAGE
+  const endIndex = startIndex + PETS_PER_PAGE
+
+  return {
+    totalItems,
+    totalPages,
+    items: pets.slice(startIndex, endIndex)
+  }
+}
+
+function createPaginationButton(label, page, options = {}) {
+  const { isActive = false, isDisabled = false, ariaLabel = '' } = options
+  const button = document.createElement('button')
+  button.type = 'button'
+  button.className = `pagination-item${isActive ? ' is-active' : ''}`
+  button.textContent = label
+
+  if (ariaLabel) {
+    button.setAttribute('aria-label', ariaLabel)
+  }
+
+  if (isActive) {
+    button.setAttribute('aria-current', 'page')
+  }
+
+  button.disabled = isDisabled
+
+  if (!isDisabled && page !== currentPage) {
+    button.addEventListener('click', () => {
+      currentPage = page
+      renderWithCurrentFilters()
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    })
+  }
+
+  return button
+}
+
+function renderPagination(totalItems) {
+  const pagination = getPaginationElement()
+  if (!pagination) return
+
+  pagination.innerHTML = ''
+
+  if (totalItems === 0) {
+    pagination.hidden = true
+    return
+  }
+
+  const totalPages = getTotalPages(totalItems)
+  pagination.hidden = false
+
+  pagination.appendChild(
+    createPaginationButton('<', currentPage - 1, {
+      isDisabled: currentPage === 1,
+      ariaLabel: 'Pagina anterior'
+    })
+  )
+
+  for (let page = 1; page <= totalPages; page += 1) {
+    pagination.appendChild(
+      createPaginationButton(String(page), page, {
+        isActive: page === currentPage,
+        ariaLabel: `Ir a la pagina ${page}`
+      })
+    )
+  }
+
+  pagination.appendChild(
+    createPaginationButton('>', currentPage + 1, {
+      isDisabled: currentPage === totalPages,
+      ariaLabel: 'Pagina siguiente'
+    })
+  )
 }
 
 function setSelectOptions(selectElement, options, placeholder) {
@@ -351,7 +445,10 @@ function populateBaseFilters() {
 
 function renderWithCurrentFilters() {
   const filteredPets = getFilteredPets()
-  renderPets(filteredPets)
+  const paginationState = getPaginationState(filteredPets)
+
+  renderPets(paginationState.items.slice(0, PETS_PER_PAGE))
+  renderPagination(paginationState.totalItems)
 }
 
 function wireFilterEvents() {
@@ -359,6 +456,8 @@ function wireFilterEvents() {
     if (!element) return
 
     element.addEventListener('change', () => {
+      currentPage = 1
+
       if (key === 'comunidad') {
         updateProvinceOptions()
       }

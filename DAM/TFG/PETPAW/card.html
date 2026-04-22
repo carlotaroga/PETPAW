@@ -12,9 +12,9 @@
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/card.css" />
 </head>
-<body class="has-fixed-navbar page-card">
-  <nav class="navbar navbar-expand-lg bg-light fixed-top">
-    <div class="container-fluid px-5">
+<body class="page-home has-fixed-navbar page-card">
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container-fluid">
       <a class="navbar-brand" href="index.html">PETPAW</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -25,10 +25,10 @@
           <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-          <ul class="navbar-nav justify-content-end flex-grow-1 pe-5 gap-4">
-            <li class="nav-item"><a class="nav-link" href="adopta.html">Adopta</a></li>
-            <li class="nav-item"><a class="nav-link" href="nosotros.html">Nosotros</a></li>
-            <li class="nav-item"><a class="nav-link" href="contacto.html">Contacto</a></li>
+          <ul class="navbar-nav justify-content-center flex-grow-1 gap-lg-4">
+            <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+            <li class="nav-item"><a class="nav-link is-active" href="adopta.html">Adopta</a></li>
+            <li class="nav-item"><a class="nav-link" href="index.html#contacto">Contacto</a></li>
           </ul>
           <div class="d-flex mt-3 mt-lg-0" data-navbar-auth></div>
         </div>
@@ -113,7 +113,7 @@
           </div>
 
           <div class="pet-actions">
-            <button class="pet-action-primary" type="button">Solicitar adopcion</button>
+            <button id="openAdoptionModalBtn" class="pet-action-primary" type="button">Solicitar adopcion</button>
             <button class="pet-action-fav" type="button" aria-label="Anadir a favoritos">
               <i class="bi bi-heart"></i>
             </button>
@@ -135,43 +135,92 @@
         <button class="sponsor-btn" type="button">Apadrinar <i class="bi bi-arrow-up-right"></i></button>
       </div>
     </section>
-  </main>
 
-  <footer>
-    <div class="page-wrap">
-      <div class="footer-grid">
-        <div>
-          <div class="logo mb-2">PETPAW</div>
-          <p class="section-subtitle">Hacemos posible la conexion entre familias y mascotas que buscan un hogar amoroso.</p>
-        </div>
-        <div class="footer-col">
-          <h4>Nuestra mision</h4>
-          <a href="nosotros.html">Quienes somos</a>
-          <a href="adopta.html">Adopta</a>
-        </div>
-        <div class="footer-col">
-          <h4>Servicios</h4>
-          <a href="involucrate.html">Voluntariado</a>
-          <a href="index.html#servicios">Donaciones</a>
-        </div>
-        <div class="footer-col">
-          <h4>Contacto</h4>
-          <a href="contacto.html">Contactanos</a>
-          <a href="#">Politicas y privacidad</a>
+    <div class="modal fade" id="adoptionModal" tabindex="-1" aria-labelledby="adoptionModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <form id="adoptionForm">
+            <div class="modal-header">
+              <h5 class="modal-title" id="adoptionModalLabel">Solicitar adopción</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body">
+              <p class="mb-2"><strong>Mensaje obligatorio</strong></p>
+              <div class="form-control mb-3 bg-light" id="requiredAdoptionMessage"></div>
+
+              <label for="extraAdoptionMessage" class="form-label">
+                Añade más información (opcional)
+              </label>
+              <textarea
+                id="extraAdoptionMessage"
+                class="form-control"
+                rows="5"
+                placeholder="Escribe aquí cualquier información adicional..."
+              ></textarea>
+
+              <div id="adoptionFormState" class="small mt-3"></div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-primary" id="submitAdoptionBtn">Enviar solicitud</button>
+            </div>
+          </form>
         </div>
       </div>
-      <div class="footer-bottom">
-        <span>(c) 2026 PETPAW. Todos los derechos reservados.</span>
-        <span>politicas y privacidad</span>
+    </div>
+
+  </main>
+
+
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-mark">P</div>
+        <div class="footer-brand-copy">
+          <strong>PETPAW</strong>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Adopta</h4>
+        <a href="adopta.html">Mascotas disponibles</a>
+        <a href="index.html#adoptar">Guia de tallas</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Involucrate</h4>
+        <a href="index.html#servicios">Voluntariado</a>
+        <a href="index.html#servicios">Maneras de apoyar</a>
+        <a href="index.html#contacto">Preguntas frecuentes</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Compania</h4>
+        <a href="index.html#nosotros">Sobre nosotros</a>
+        <a href="index.html#contacto">Contactanos</a>
+        <a href="#">Politica de privacidad</a>
+        <a href="#">Terminos de servicio</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>&copy; PetPaw 2026. All Right Reserved.</span>
+      <div class="footer-socials">
+        <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+        <a href="#" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+        <a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
       </div>
     </div>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="supabase-config.js"></script>
-  <script src="auth-shared.js"></script>
-  <script src="navbar-user.js"></script>
-  <script src="card.js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/auth-shared.js"></script>
+  <script src="js/navbar-user.js"></script>
+  <script src="js/card.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

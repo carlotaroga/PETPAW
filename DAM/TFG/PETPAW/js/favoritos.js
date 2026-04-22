@@ -34,7 +34,7 @@
     empty: document.getElementById('favorites-empty'),
     grid: document.getElementById('favorites-grid'),
     pagination: document.getElementById('favorites-pagination'),
-    template: document.getElementById('favorite-card-template')
+    template: document.getElementById('card-mascota-template')
   };
 
   function normalizeRelation(value) {
@@ -68,7 +68,7 @@
     if (sex === true) {
       return {
         className: 'male',
-        html: '<i class="bi bi-gender-male"></i>',
+        html: '<i class="fa-solid fa-mars" aria-hidden="true"></i>',
         label: 'Macho'
       };
     }
@@ -76,7 +76,7 @@
     if (sex === false) {
       return {
         className: 'female',
-        html: '<i class="bi bi-gender-female"></i>',
+        html: '<i class="fa-solid fa-venus" aria-hidden="true"></i>',
         label: 'Hembra'
       };
     }
@@ -110,12 +110,6 @@
     const sizeName = normalizeRelation(pet.sizes)?.name || 'Tamano sin dato';
     const breed = helpers.normalizeText(pet.breed) || 'Raza sin dato';
     return `${formatAge(pet.age)} - ${sizeName} - ${breed}`;
-  }
-
-  function getSpeciesText(pet) {
-    const speciesName = normalizeRelation(pet.species)?.name;
-    if (!speciesName) return '';
-    return `Especie: ${speciesName}`;
   }
 
   function setEmptyState(visible) {
@@ -194,21 +188,19 @@
       if (!pet) return;
 
       const clone = elements.template.content.cloneNode(true);
-      const card = clone.querySelector('.favorite-card');
+      const card = clone.querySelector('.card-mascota');
       const status = clone.querySelector('[data-status]');
-      const removeButton = clone.querySelector('[data-remove]');
       const image = clone.querySelector('[data-image]');
       const name = clone.querySelector('[data-name]');
       const sex = clone.querySelector('[data-sex]');
       const meta = clone.querySelector('[data-meta]');
-      const species = clone.querySelector('[data-species]');
 
       const statusName = normalizeRelation(pet.status)?.name || '';
       if (status) {
-        if (statusName) {
+        if (statusName && String(statusName).trim().toLowerCase() !== 'disponible') {
           status.textContent = statusName;
         } else {
-          status.classList.add('is-empty');
+          status.remove();
         }
       }
 
@@ -225,10 +217,6 @@
         meta.textContent = buildMeta(pet);
       }
 
-      if (species) {
-        species.textContent = getSpeciesText(pet);
-      }
-
       if (sex) {
         const sexInfo = getSexMarkup(pet.sex);
         if (sexInfo.className) {
@@ -238,13 +226,6 @@
         } else {
           sex.remove();
         }
-      }
-
-      if (removeButton) {
-        removeButton.addEventListener('click', async (event) => {
-          event.stopPropagation();
-          await removeFavorite(favorite.id);
-        });
       }
 
       if (card) {
@@ -274,7 +255,7 @@
     const totalPages = getTotalPages();
     elements.pagination.innerHTML = '';
 
-    if (totalPages <= 1) {
+    if (!state.favorites.length) {
       elements.pagination.hidden = true;
       return;
     }
@@ -283,7 +264,7 @@
 
     const prevButton = document.createElement('button');
     prevButton.type = 'button';
-    prevButton.className = 'favorites-page-btn';
+    prevButton.className = 'pagination-item';
     prevButton.innerHTML = '<i class="bi bi-chevron-left"></i>';
     prevButton.disabled = state.page === 1;
     prevButton.addEventListener('click', () => {
@@ -295,7 +276,7 @@
     for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
       const button = document.createElement('button');
       button.type = 'button';
-      button.className = `favorites-page-btn${pageNumber === state.page ? ' is-active' : ''}`;
+      button.className = `pagination-item${pageNumber === state.page ? ' is-active' : ''}`;
       button.textContent = String(pageNumber);
       button.addEventListener('click', () => {
         state.page = pageNumber;
@@ -306,7 +287,7 @@
 
     const nextButton = document.createElement('button');
     nextButton.type = 'button';
-    nextButton.className = 'favorites-page-btn';
+    nextButton.className = 'pagination-item';
     nextButton.innerHTML = '<i class="bi bi-chevron-right"></i>';
     nextButton.disabled = state.page === totalPages;
     nextButton.addEventListener('click', () => {
@@ -364,7 +345,7 @@
         sizes (name),
         status (name),
         species (name),
-        shelters (name, city, email)
+        shelters (name, address, email)
       `)
       .in('id', petIds);
 

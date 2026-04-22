@@ -17,12 +17,26 @@
       <p class="auth-subtitle">Completa la informacion necesaria</p>
 
       <form id="signup-form" class="auth-form" action="#" method="post" novalidate>
+        <fieldset class="account-type-group">
+          <legend class="form-label form-label-inline">¿Eres una protectora?</legend>
+          <div class="account-type-options">
+            <label class="account-type-option" for="account-type-no">
+              <input id="account-type-no" type="radio" name="account-type" value="client" required />
+              <span>No</span>
+            </label>
+            <label class="account-type-option" for="account-type-yes">
+              <input id="account-type-yes" type="radio" name="account-type" value="shelter" required />
+              <span>Si</span>
+            </label>
+          </div>
+        </fieldset>
+
         <div>
           <label class="form-label" for="signup-name">Nombre</label>
           <input class="form-input" id="signup-name" type="text" placeholder="Ingresa tu nombre" autocomplete="given-name" required />
         </div>
 
-        <div>
+        <div id="signup-lastname-group">
           <label class="form-label" for="signup-lastname">Apellidos</label>
           <input class="form-input" id="signup-lastname" type="text" placeholder="Ingresa tus apellidos" autocomplete="family-name" required />
         </div>
@@ -35,6 +49,25 @@
         <div>
           <label class="form-label" for="signup-phone">Numero de telefono</label>
           <input class="form-input" id="signup-phone" type="tel" placeholder="+34 622 22 22 22" autocomplete="tel" required />
+        </div>
+
+        <div id="signup-address-group" hidden>
+          <label class="form-label" for="signup-address">Direccion</label>
+          <input class="form-input" id="signup-address" type="text" placeholder="Calle, numero..." autocomplete="street-address" />
+        </div>
+
+        <div id="signup-community-group" hidden>
+          <label class="form-label" for="signup-community">Comunidad autonoma</label>
+          <select class="form-input form-select" id="signup-community">
+            <option value="">Selecciona una comunidad</option>
+          </select>
+        </div>
+
+        <div id="signup-province-group" hidden>
+          <label class="form-label" for="signup-province">Provincia</label>
+          <select class="form-input form-select" id="signup-province">
+            <option value="">Selecciona una provincia</option>
+          </select>
         </div>
 
         <div>
@@ -71,8 +104,8 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="supabase-config.js"></script>
-  <script src="auth-shared.js"></script>
-  <script src="signup.js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/auth-shared.js"></script>
+  <script src="js/signup.js"></script>
 </body>
 </html>

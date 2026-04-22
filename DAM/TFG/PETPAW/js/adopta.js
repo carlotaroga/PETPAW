@@ -103,7 +103,7 @@ function renderPets(pets) {
     if (badge) {
       const status = pet.status?.name
 
-      if (status) {
+      if (status && String(status).trim().toLowerCase() !== 'disponible') {
         badge.textContent = status
       } else {
         badge.remove()

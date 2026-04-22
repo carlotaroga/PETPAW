@@ -100,16 +100,27 @@
 }
 
 .pet-gender-icon {
-  color: #59bbf4;
   font-size: 22px;
   vertical-align: top;
+}
+
+.pet-gender-icon.is-male {
+  color: #59bbf4;
+}
+
+.pet-gender-icon.is-female {
+  color: #ef7db1;
+}
+
+.pet-gender-icon.is-unknown {
+  color: #98a1af;
 }
 
 .pet-meta-card {
   border: 1px solid #e8e8e8;
   border-radius: 12px;
   padding: 12px 14px;
-  background: #f8f8f8;
+  background: var(--white);
   height: 100%;
 }
 
@@ -146,7 +157,7 @@
 
 .shelter-card {
   border: 1px solid #e5e5e5;
-  background: #f8f8f8;
+  background: var(--white);
   border-radius: 12px;
   padding: 14px;
 }
@@ -214,9 +225,11 @@
   grid-template-columns: 320px 1fr;
   gap: 38px;
   align-items: center;
-  background: #f0e8f8;
+  margin-top: 80px;
+  background: var(--white);
   border-radius: 20px;
   padding: 34px;
+  box-shadow: var(--shadow-soft);
 }
 
 .sponsor-media img {
@@ -360,4 +373,8 @@
 
 .card-state.is-error {
   color: #b6415d;
+}
+
+.page-home.page-card {
+  background: var(--background);
 }
