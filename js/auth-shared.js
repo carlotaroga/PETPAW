@@ -1,6 +1,8 @@
+/* Reúne utilidades comunes de autenticación, rol y sincronización de perfil. */
 (function bootstrapAuthHelpers(global) {
   const PENDING_PROFILE_KEY = 'petpaw_pending_profile_v1';
 
+  /* Recupera el cliente global de Supabase y falla si no está listo. */
   function getSupabaseClient() {
     const client = global.PETPAW_SUPABASE;
 
@@ -11,6 +13,7 @@
     return client;
   }
 
+  /* Normaliza textos y mensajes frecuentes del flujo de auth. */
   function normalizeText(value) {
     return String(value || '').trim();
   }
@@ -43,6 +46,7 @@
     return error.message || 'Ha ocurrido un error inesperado.';
   }
 
+  /* Controla redirecciones seguras y detecta accesos de protectora. */
   function getRedirectTarget(defaultTarget) {
     const params = new URLSearchParams(global.location.search);
     const redirect = normalizeText(params.get('redirect'));
@@ -96,6 +100,7 @@
     button.textContent = isLoading ? loadingText : button.dataset.defaultText;
   }
 
+  /* Guarda perfiles pendientes mientras se termina de sincronizar users. */
   function getPendingStore() {
     try {
       const raw = global.localStorage.getItem(PENDING_PROFILE_KEY);
@@ -196,6 +201,7 @@
     return message.includes('duplicate key') || message.includes('already exists');
   }
 
+  /* Intenta resolver automáticamente la protectora asociada por email. */
   async function resolveShelterIdByEmail(supabaseClient, email) {
     const normalizedEmail = normalizeText(email).toLowerCase();
     if (!normalizedEmail) return null;
@@ -233,6 +239,7 @@
     };
   }
 
+  /* Inserta o actualiza la fila pública del usuario tras autenticarse. */
   async function ensureUserProfile(supabaseClient, authUser, profileOverride = null) {
     if (!authUser?.id) {
       return { ok: false, reason: 'missing-auth-user' };

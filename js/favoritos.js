@@ -1,3 +1,4 @@
+/* Gestiona la página de favoritos, su listado y su paginación. */
 (function initFavoritosPage() {
   const helpers = window.PETPAW_AUTH;
   const favoritesService = window.PETPAW_FAVORITES;
@@ -14,6 +15,7 @@
     return;
   }
 
+  /* Estado local, referencias del DOM e imágenes de apoyo. */
   const fallbackImages = [
     'resources/img/pexels-svliiim-33699491.jpg',
     'resources/img/pexels-miami302-16676458.jpg',
@@ -37,6 +39,7 @@
     template: document.getElementById('card-mascota-template')
   };
 
+  /* Utilidades para normalizar datos y construir el contenido de la card. */
   function normalizeRelation(value) {
     if (!value) return null;
     if (Array.isArray(value)) return value[0] || null;
@@ -118,6 +121,7 @@
     return `${formatAge(pet.age)} - ${sizeName} - ${breed}`;
   }
 
+  /* Reutiliza el template de mascota para pintar los favoritos visibles. */
   function renderPetCardCollection(rows, gridElement, imageAltSuffix) {
     if (!gridElement || !elements.template) return;
 
@@ -204,6 +208,7 @@
     }
   }
 
+  /* Calcula cuántas páginas hacen falta según el total de favoritos. */
   function getTotalPages() {
     return Math.max(1, Math.ceil(state.favorites.length / state.pageSize));
   }
@@ -217,6 +222,7 @@
     return state.favorites.slice(start, end);
   }
 
+  /* Elimina un favorito y refresca el estado de la rejilla. */
   async function removeFavorite(favoriteId) {
     try {
       if (favoritesService?.removeFavoriteById) {
@@ -254,11 +260,13 @@
     render();
   }
 
+  /* Redibuja tarjetas y controles de la página actual. */
   function renderCards() {
     const pageRows = getCurrentPageRows();
     renderPetCardCollection(pageRows, elements.grid, 'en favoritos');
   }
 
+  /* Dibuja la paginación y permite navegar entre páginas de favoritos. */
   function renderPagination() {
     if (!elements.pagination) return;
 
@@ -318,6 +326,7 @@
     renderPagination();
   }
 
+  /* Lee favoritos con sus relaciones para poder renderizar cada mascota. */
   async function fetchFavoritesWithPets(userId) {
     const { data: favoritesRows, error: favoritesError } = await supabaseClient
       .from('favorites')
@@ -373,6 +382,7 @@
       .filter((favorite) => favorite.pet);
   }
 
+  /* Obtiene el usuario actual o lo manda a login si hace falta. */
   async function resolveUser() {
     let authUser = null;
 
@@ -407,6 +417,7 @@
     window.location.href = 'login.html?redirect=favoritos.html';
   }
 
+  /* Carga los favoritos del usuario y pinta el estado inicial de la página. */
   async function init() {
     try {
       showFeedback('Cargando favoritos...');
@@ -435,5 +446,6 @@
     }
   }
 
+  /* Espera al DOM para no intentar pintar antes de tiempo. */
   document.addEventListener('DOMContentLoaded', init);
 })();

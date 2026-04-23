@@ -3,6 +3,7 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey)
 
+/* Imágenes y tarjetas de reserva por si faltan datos reales. */
 const fallbackImages = [
   'resources/img/pexels-svliiim-33699491.jpg',
   'resources/img/pexels-miami302-16676458.jpg',
@@ -52,6 +53,7 @@ let lookups = {
 const PETS_PER_PAGE = 6
 let currentPage = 1
 
+/* Utilidades comunes para normalizar y enriquecer datos del catálogo. */
 function safeNumber(value) {
   const parsed = Number(value)
   return Number.isFinite(parsed) ? parsed : null
@@ -87,6 +89,7 @@ async function safeSelect(table, columns) {
   return data ?? []
 }
 
+/* Carga mascotas y catálogos necesarios para construir filtros y cards. */
 async function loadPetsData() {
   const [pets, sizes, statuses, species, shelters, communities, provinces] = await Promise.all([
     safeSelect(
@@ -161,6 +164,7 @@ async function loadPetsData() {
   }
 }
 
+/* Construye el texto y la imagen que verá cada tarjeta de mascota. */
 function buildMeta(pet) {
   const ageLabel = Number.isFinite(pet.age) ? `${pet.age} años` : 'Edad desconocida'
   const sizeLabel = pet.size_name || 'Tamaño sin definir'
@@ -189,6 +193,7 @@ function getImage(pet, index) {
   return fallbackImages[index % fallbackImages.length]
 }
 
+/* Pinta las cards visibles de la página actual. */
 function renderPets(pets) {
   const grid = document.getElementById('adopta-grid')
   const template = document.getElementById('card-mascota-template')
@@ -313,6 +318,7 @@ function createPaginationButton(label, page, options = {}) {
   return button
 }
 
+/* Genera la paginación visible según el total de mascotas filtradas. */
 function renderPagination(totalItems) {
   const pagination = getPaginationElement()
   if (!pagination) return
@@ -448,6 +454,7 @@ function updateBreedOptions() {
   setSelectOptions(filterElements.raza, breedOptions, 'Raza')
 }
 
+/* Rellena los select base con comunidades, provincias y catálogos. */
 function populateBaseFilters() {
   const communityOptions = lookups.communities.map((community) => ({
     value: community.id,
@@ -464,6 +471,7 @@ function populateBaseFilters() {
   updateBreedOptions()
 }
 
+/* Aplica filtros, calcula página actual y vuelve a dibujar la rejilla. */
 function renderWithCurrentFilters() {
   const filteredPets = getFilteredPets()
   const paginationState = getPaginationState(filteredPets)
@@ -489,6 +497,7 @@ function wireFilterEvents() {
   })
 }
 
+/* Inicializa los datos y enlaza los filtros al cargar la página. */
 window.addEventListener('DOMContentLoaded', async () => {
   const loaded = await loadPetsData()
   allPets = loaded.pets

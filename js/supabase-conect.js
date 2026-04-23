@@ -5,6 +5,7 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 
 const supabase = createClient(supabaseUrl, supabaseKey)
 
+/* Recupera el listado de mascotas y devuelve un array seguro si falla. */
 export async function fetchPets() {
   const { data, error } = await supabase.from('pets').select('*')
   if (error) {

@@ -1,3 +1,4 @@
+/* Renderiza la navbar según la sesión y gestiona el perfil del usuario. */
 (function initNavbarUser() {
   const helpers = window.PETPAW_AUTH;
   if (!helpers) {
@@ -13,6 +14,7 @@
     return;
   }
 
+  /* Rutas y estado temporal del menú y del modal de perfil. */
   const favoritesHref = 'favoritos.html';
   const shelterDashboardHref = 'shelter-dashboard.html';
   const currentPath = window.location.pathname.toLowerCase();
@@ -23,6 +25,7 @@
   let currentProfileModal = null;
   let currentProfileData = null;
 
+  /* Utilidades de formato para pintar datos del usuario sin riesgos. */
   function escapeHtml(value) {
     return String(value || '')
       .replaceAll('&', '&amp;')
@@ -60,6 +63,7 @@
     return 'PP';
   }
 
+  /* Abre y cierra el dropdown del perfil en desktop o móvil. */
   function closeMenu() {
     if (!currentOpenMenu) return;
 
@@ -102,6 +106,7 @@
     submitButton.textContent = isLoading ? 'Guardando...' : submitButton.dataset.defaultText;
   }
 
+  /* Crea una sola vez el modal donde el usuario edita su cuenta. */
   function ensureProfileModal() {
     if (currentProfileModal) {
       return currentProfileModal;
@@ -217,6 +222,7 @@
     document.body.classList.add('petpaw-modal-open');
   }
 
+  /* Guarda cambios de perfil y contraseña desde el modal. */
   async function handleProfileSubmit(event) {
     event.preventDefault();
 
@@ -358,6 +364,7 @@
     await renderNavbar();
   }
 
+  /* Pinta la versión pública o privada de la navbar. */
   function renderLoggedOut(slot) {
     slot.innerHTML = `
       <div class="navbar-auth-guest">
@@ -479,6 +486,7 @@
     }
   }
 
+  /* Lee la sesión actual y sincroniza el perfil si hace falta. */
   async function getUserDataFromSession() {
     return helpers.getCurrentUserProfile(supabaseClient);
   }
@@ -497,6 +505,7 @@
     }
   }
 
+  /* Inserta la navbar correcta y prepara sus eventos de interacción. */
   async function renderNavbar() {
     const slots = Array.from(document.querySelectorAll('[data-navbar-auth]'));
     if (!slots.length) return;
@@ -560,5 +569,6 @@
     enableAdminMode
   };
 
+  /* Espera al DOM para montar el menú en cada página cliente. */
   document.addEventListener('DOMContentLoaded', renderNavbar);
 })();

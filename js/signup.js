@@ -1,3 +1,4 @@
+/* Gestiona el alta de usuarios y protectoras desde un único formulario. */
 (function initSignupPage() {
   const helpers = window.PETPAW_AUTH;
   if (!helpers) {
@@ -13,6 +14,7 @@
     return;
   }
 
+  /* Guarda referencias del formulario y catálogos dependientes. */
   const form = document.getElementById('signup-form');
   if (!form) return;
 
@@ -40,6 +42,7 @@
   const provinceGroup = document.getElementById('signup-province-group');
   const nameLabel = form.querySelector('label[for="signup-name"]');
 
+  /* Muestra el estado actual del proceso de registro. */
   function showMessage(text, type) {
     if (!messageBox) return;
 
@@ -53,6 +56,7 @@
     }
   }
 
+  /* Reinicia el mensaje visible antes de otra validación. */
   function clearMessage() {
     if (!messageBox) return;
     messageBox.textContent = '';
@@ -60,6 +64,7 @@
     messageBox.classList.remove('is-error', 'is-success');
   }
 
+  /* Permite enseñar u ocultar la contraseña al escribirla. */
   function wirePasswordToggle() {
     const toggle = form.querySelector('[data-password-toggle]');
     if (!toggle || !passwordInput) return;
@@ -72,6 +77,7 @@
     });
   }
 
+  /* Detecta si el formulario está en modo cliente o protectora. */
   function getSelectedAccountType() {
     const selected = accountTypeInputs.find((input) => input.checked);
     return selected?.value || '';
@@ -86,12 +92,14 @@
     input.required = Boolean(isRequired);
   }
 
+  /* Reinicia el selector de provincias cuando cambia la comunidad. */
   function resetProvinceSelect() {
     if (!provinceInput) return;
     provinceInput.innerHTML = '<option value="">Selecciona una provincia</option>';
     provinceInput.value = '';
   }
 
+  /* Filtra las provincias disponibles para la comunidad elegida. */
   function renderProvinceOptions(communityId) {
     if (!provinceInput) return;
 
@@ -106,6 +114,7 @@
     provinceInput.innerHTML = options.join('');
   }
 
+  /* Pinta el listado base de comunidades disponibles. */
   function renderCommunityOptions() {
     if (!communityInput) return;
 
@@ -119,6 +128,7 @@
     communityInput.innerHTML = options.join('');
   }
 
+  /* Ajusta campos, textos y obligatoriedad según el tipo de cuenta. */
   function updateFormMode() {
     const shelterMode = isShelterMode();
 
@@ -163,6 +173,7 @@
     }
   }
 
+  /* Envuelve selects a Supabase para manejar errores de forma uniforme. */
   async function safeSelect(table, columns) {
     const { data, error } = await supabaseClient.from(table).select(columns);
     if (error) {
@@ -171,6 +182,7 @@
     return data || [];
   }
 
+  /* Carga comunidades y provincias para el registro de protectoras. */
   async function loadLocationCatalogs() {
     const [communities, provinces] = await Promise.all([
       safeSelect('autonomous_communities', 'id, name'),
@@ -183,6 +195,7 @@
     resetProvinceSelect();
   }
 
+  /* Si el usuario ya tiene sesión, lo manda a su pantalla correcta. */
   async function redirectIfLoggedIn() {
     try {
       const profile = await helpers.getCurrentUserProfile(supabaseClient);
@@ -194,6 +207,7 @@
     }
   }
 
+  /* Crea la fila de la protectora antes de enlazarla con el usuario. */
   async function createShelterRecord(payload) {
     const { data, error } = await supabaseClient
       .from('shelters')
@@ -216,6 +230,7 @@
     return data.id;
   }
 
+  /* Sincroniza el perfil de un cliente en la tabla users. */
   async function syncClientProfile(authUser, baseProfile) {
     helpers.savePendingProfile(baseProfile, authUser.id);
 
@@ -232,6 +247,7 @@
     return syncProfile;
   }
 
+  /* Sincroniza el alta de una protectora y guarda su shelter_id. */
   async function syncShelterProfile(authUser, shelterProfile) {
     const shelterId = await createShelterRecord(shelterProfile);
     const profilePayload = {

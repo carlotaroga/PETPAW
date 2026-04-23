@@ -1,3 +1,4 @@
+/* Gestiona el login y redirige según el rol del usuario. */
 (function initLoginPage() {
   const helpers = window.PETPAW_AUTH;
   if (!helpers) {
@@ -13,6 +14,7 @@
     return;
   }
 
+  /* Referencias del formulario y del mensaje de estado. */
   const form = document.getElementById('login-form');
   if (!form) return;
 
@@ -22,6 +24,7 @@
   const messageBox = document.getElementById('login-message');
   const requestedRedirect = helpers.getRedirectTarget('');
 
+  /* Muestra mensajes breves de éxito o error en el formulario. */
   function showMessage(text, type) {
     if (!messageBox) return;
 
@@ -35,6 +38,7 @@
     }
   }
 
+  /* Limpia el mensaje visible antes de validar o reenviar el formulario. */
   function clearMessage() {
     if (!messageBox) return;
     messageBox.textContent = '';
@@ -42,6 +46,7 @@
     messageBox.classList.remove('is-error', 'is-success');
   }
 
+  /* Permite alternar entre ver u ocultar la contraseña. */
   function wirePasswordToggle() {
     const toggle = form.querySelector('[data-password-toggle]');
     if (!toggle || !passwordInput) return;
@@ -54,6 +59,7 @@
     });
   }
 
+  /* Si ya hay sesión activa, evita quedarse otra vez en login. */
   async function redirectIfLoggedIn() {
     try {
       const profile = await helpers.getCurrentUserProfile(supabaseClient);
@@ -68,6 +74,7 @@
     }
   }
 
+  /* Resuelve el destino final una vez el login ha sido correcto. */
   async function redirectAfterLogin(authUser) {
     try {
       const profile = await helpers.getCurrentUserProfile(supabaseClient);
@@ -80,6 +87,7 @@
     }
   }
 
+  /* Valida, autentica y sincroniza el perfil local tras iniciar sesión. */
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     clearMessage();
@@ -124,6 +132,7 @@
     }
   });
 
+  /* Arranca los comportamientos básicos de la pantalla de acceso. */
   wirePasswordToggle();
   redirectIfLoggedIn();
 })();

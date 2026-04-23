@@ -1,3 +1,4 @@
+/* Gestiona el panel privado de la protectora y sus mascotas. */
 (function initShelterDashboard() {
   const helpers = window.PETPAW_AUTH;
   if (!helpers) {
@@ -13,6 +14,7 @@
     return;
   }
 
+  /* Estado principal del panel, formularios y catálogos asociados. */
   const state = {
     profile: null,
     shelter: null,
@@ -29,6 +31,7 @@
     isSaving: false
   };
 
+  /* Referencias a la interfaz para renderizar y escuchar eventos. */
   const elements = {
     shelterName: document.getElementById('shelterName'),
     shelterMeta: document.getElementById('shelterMeta'),
@@ -60,6 +63,7 @@
     pendingImagesList: document.getElementById('pendingImagesList')
   };
 
+  /* Utilidades de texto y mensajes de estado del dashboard. */
   function escapeHtml(value) {
     return String(value || '')
       .replaceAll('&', '&amp;')
@@ -178,6 +182,7 @@
     });
   }
 
+  /* Renderiza fotos ya guardadas y nuevas fotos antes de subirlas. */
   function renderExistingImages() {
     if (!elements.existingImagesList) return;
 
@@ -238,6 +243,7 @@
       || !pet?.species_id;
   }
 
+  /* Actualiza el resumen superior con los totales del shelter. */
   function setSummary() {
     const total = state.pets.length;
     const adopted = state.pets.filter((pet) => {
@@ -249,6 +255,7 @@
     if (elements.metricWithStatus) elements.metricWithStatus.textContent = String(adopted);
   }
 
+  /* Pinta los datos de la protectora y de la persona gestora. */
   function renderHeader() {
     if (elements.shelterName) {
       elements.shelterName.textContent = state.shelter?.name || 'Shelter sin nombre';
@@ -272,6 +279,7 @@
     }
   }
 
+  /* Rellena los select del formulario con tamaños, estados y especies. */
   function renderSelect(select, items, placeholder) {
     if (!select) return;
 
@@ -289,6 +297,7 @@
     renderSelect(elements.petSpecies, state.catalogs.species, 'Selecciona una especie');
   }
 
+  /* Dibuja las cards de mascotas del panel con sus acciones. */
   function renderPets() {
     if (!elements.petsList || !elements.petsEmptyState) return;
 
@@ -401,6 +410,7 @@
     showFormState('');
   }
 
+  /* Resuelve la sesión y verifica que la cuenta pertenezca a una protectora. */
   async function resolveSessionUser() {
     const { data, error } = await supabaseClient.auth.getSession();
     if (error) {
@@ -496,6 +506,7 @@
     return profile;
   }
 
+  /* Carga datos base del shelter, catálogos y mascotas asociadas. */
   async function loadShelter() {
     const { data, error } = await supabaseClient
       .from('shelters')
@@ -573,6 +584,7 @@
     renderPets();
   }
 
+  /* Construye el payload final antes de insertar o actualizar una mascota. */
   function buildPetPayload() {
     const name = helpers.normalizeText(elements.petName?.value);
     const age = Number(elements.petAge?.value);
@@ -727,12 +739,14 @@
     }
   }
 
+  /* Sincroniza la relación entre la mascota y sus imágenes en storage. */
   async function syncPetImages(petId) {
     await syncRemovedImages(petId);
     await syncNewImages(petId);
     setCurrentImages();
   }
 
+  /* Guarda la mascota actual y refresca el listado del panel. */
   async function savePet(event) {
     event.preventDefault();
     if (state.isSaving) return;
@@ -880,6 +894,7 @@
     });
   }
 
+  /* Arranca el dashboard completo cuando la sesión es válida. */
   async function init() {
     showDashboardState('Cargando panel...');
     closeForm();

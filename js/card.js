@@ -2,6 +2,7 @@
 const fallbackSupabaseKey =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhmd2thZWRjcHZwZmNjd2JjcmllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg5MjEwOTcsImV4cCI6MjA4NDQ5NzA5N30.WTkRsnOpDEnqzffLzNQ0AZl18ROu59dlLCupkDatwHQ'
 
+/* Reutiliza helpers globales y resuelve un cliente válido para la ficha. */
 const authHelpers = window.PETPAW_AUTH || null
 const favoritesService = window.PETPAW_FAVORITES || null
 
@@ -52,6 +53,7 @@ const fallbackImages = [
   'resources/img/pexels-rdne-7348856.jpg'
 ]
 
+/* Estado local de imágenes, favoritos y solicitud de adopción. */
 const sliderState = {
   images: [],
   currentIndex: 0
@@ -70,6 +72,7 @@ const adoptionState = {
   isSubmitting: false
 }
 
+/* Referencias principales del DOM para evitar búsquedas repetidas. */
 const elements = {
   image: document.getElementById('pet-main-image'),
   dots: document.getElementById('slider-dots'),
@@ -92,6 +95,7 @@ const elements = {
   favoriteIcon: document.querySelector('.pet-action-fav i')
 }
 
+/* Utilidades para leer la mascota actual y normalizar sus datos. */
 function readPetIdFromUrl() {
   const params = new URLSearchParams(window.location.search)
   const raw = params.get('id') ?? params.get('pet')
@@ -121,6 +125,7 @@ function formatStatusLabel(statusName) {
   return String(statusName || '').trim()
 }
 
+/* Mensajes rápidos de estado para acciones de la ficha. */
 function showState(message, isError = false) {
   if (!elements.state) return
   elements.state.textContent = message
@@ -198,6 +203,7 @@ function updateAdoptionButton(statusName) {
   )
 }
 
+/* Mantiene el botón de favoritos sincronizado con el estado real. */
 function setFavoriteVisual(isFavorite) {
   favoriteState.isFavorite = Boolean(isFavorite)
 
@@ -452,6 +458,7 @@ function updateMainImage() {
   })
 }
 
+/* Controla la galería principal y sus miniaturas o puntos de navegación. */
 function setSliderImages(images, petName) {
   const normalized = images.length
     ? images
@@ -506,6 +513,7 @@ function wireSliderControls() {
   }
 }
 
+/* Consulta la mascota con todas sus relaciones necesarias para la ficha. */
 async function fetchPetById(petId) {
   if (!supabaseClient) {
     throw new Error('Supabase no esta disponible.')
@@ -560,6 +568,7 @@ async function fetchShelterLocationNames(shelter) {
   }
 }
 
+/* Pinta los datos principales de la mascota y de su protectora. */
 function renderPet(pet, provinceName, communityName) {
   const petName = pet?.name || 'Mascota'
   const sexLabel = formatSexLabel(pet?.sex)
@@ -621,6 +630,7 @@ function renderPet(pet, provinceName, communityName) {
   setSliderImages(images, petName)
 }
 
+/* Carga la ficha desde la URL y deja lista la interfaz de detalle. */
 async function initPetCard() {
   wireSliderControls()
   wireFavoriteButton()
@@ -673,6 +683,7 @@ async function initPetCard() {
 window.addEventListener('DOMContentLoaded', initPetCard)
 
 // Funciones para el modal de adopción
+/* Gestiona el modal de solicitud de adopción y su envío a la función. */
 function initAdoptionModal() {
   const openAdoptionModalBtn = document.getElementById('openAdoptionModalBtn')
   const adoptionForm = document.getElementById('adoptionForm')
@@ -802,6 +813,7 @@ function initAdoptionModal() {
   })
 }
 
+/* Arranca ficha y modal cuando el DOM ya está disponible. */
 window.addEventListener('DOMContentLoaded', () => {
   initPetCard()
   initAdoptionModal()

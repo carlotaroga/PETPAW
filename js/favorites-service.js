@@ -1,8 +1,10 @@
+/* Centraliza las operaciones de favoritos y acceso del usuario actual. */
 (function bootstrapFavoritesService(global) {
   const fallbackSupabaseUrl = 'https://hfwkaedcpvpfccwbcrie.supabase.co'
   const fallbackSupabaseKey =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhmd2thZWRjcHZwZmNjd2JjcmllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg5MjEwOTcsImV4cCI6MjA4NDQ5NzA5N30.WTkRsnOpDEnqzffLzNQ0AZl18ROu59dlLCupkDatwHQ'
 
+  /* Reutiliza el cliente compartido o crea uno de respaldo si hace falta. */
   const supabaseClient =
     global.PETPAW_SUPABASE || global.supabase?.createClient(fallbackSupabaseUrl, fallbackSupabaseKey)
   const authHelpers = global.PETPAW_AUTH
@@ -12,6 +14,7 @@
     return
   }
 
+  /* Detecta errores comunes de Supabase para tratarlos mejor. */
   function isNoRowsError(error) {
     return error?.code === 'PGRST116'
   }
@@ -24,11 +27,13 @@
     return message.includes('duplicate key')
   }
 
+  /* Calcula la ruta actual para poder volver aquí tras el login. */
   function getCurrentRelativePath() {
     const fileName = global.location.pathname.split('/').pop() || 'index.html'
     return `${fileName}${global.location.search || ''}`
   }
 
+  /* Garantiza que exista el perfil en users al usar favoritos. */
   async function ensureAppUserProfile(authUser) {
     if (!authUser?.id || !authHelpers?.ensureUserProfile) {
       return
@@ -51,6 +56,7 @@
     return parts.filter(Boolean).join(' | ')
   }
 
+  /* Construye la URL de acceso manteniendo la vuelta a la página actual. */
   function buildLoginUrl(returnTo = '') {
     const target = String(returnTo || '').trim() || getCurrentRelativePath()
     return `login.html?redirect=${encodeURIComponent(target)}`
@@ -60,6 +66,7 @@
     global.location.href = buildLoginUrl(returnTo)
   }
 
+  /* Recupera el usuario autenticado y sincroniza su perfil si es necesario. */
   async function getCurrentUser() {
     const { data, error } = await supabaseClient.auth.getUser()
     if (error) {
@@ -84,6 +91,7 @@
     return user
   }
 
+  /* Lee y actualiza la tabla favorites para cada mascota del usuario. */
   async function fetchFavoritePetIds(userId) {
     const { data, error } = await supabaseClient
       .from('favorites')
