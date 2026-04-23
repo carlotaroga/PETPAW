@@ -15,7 +15,7 @@ const fallbackImages = [
 ]
 
 const fallbackPets = [
-  { name: 'Nombre', age: '2 anos', size: 'Mediano', breed: 'Mestizo', status: '' }
+  { name: 'Nombre', age: '2 años', size: 'Mediano', breed: 'Mestizo', status: '' }
 ]
 
 /* =========================
@@ -47,8 +47,8 @@ async function fetchPets() {
    META INFO
 ========================= */
 function buildMeta(pet) {
-  const age = pet.age ? `${pet.age} anos` : 'Edad'
-  const size = pet.sizes?.name ?? 'Tamano'
+  const age = pet.age ? `${pet.age} años` : 'Edad'
+  const size = pet.sizes?.name ?? 'Tamaño'
   const breed = pet.breed ?? 'Raza'
 
   return `${age} - ${size} - ${breed}`

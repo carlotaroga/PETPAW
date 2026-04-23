@@ -43,6 +43,12 @@
     return value;
   }
 
+  function formatStatusLabel(statusName) {
+    const normalized = String(statusName ?? '').trim().toLowerCase();
+    if (normalized === 'adoptado') return 'Adoptado';
+    return String(statusName ?? '').trim();
+  }
+
   function showFeedback(message, type) {
     if (!elements.feedback) return;
 
@@ -60,8 +66,8 @@
 
   function formatAge(age) {
     if (!Number.isFinite(age)) return 'Edad sin dato';
-    if (age === 1) return '1 ano';
-    return `${age} anos`;
+    if (age === 1) return '1 año';
+    return `${age} años`;
   }
 
   function getSexMarkup(sex) {
@@ -107,9 +113,81 @@
   }
 
   function buildMeta(pet) {
-    const sizeName = normalizeRelation(pet.sizes)?.name || 'Tamano sin dato';
+    const sizeName = normalizeRelation(pet.sizes)?.name || 'Tamaño sin dato';
     const breed = helpers.normalizeText(pet.breed) || 'Raza sin dato';
     return `${formatAge(pet.age)} - ${sizeName} - ${breed}`;
+  }
+
+  function renderPetCardCollection(rows, gridElement, imageAltSuffix) {
+    if (!gridElement || !elements.template) return;
+
+    gridElement.innerHTML = '';
+
+    rows.forEach((row, index) => {
+      const pet = row.pet;
+      if (!pet) return;
+
+      const clone = elements.template.content.cloneNode(true);
+      const card = clone.querySelector('.card-mascota');
+      const status = clone.querySelector('[data-status]');
+      const image = clone.querySelector('[data-image]');
+      const name = clone.querySelector('[data-name]');
+      const sex = clone.querySelector('[data-sex]');
+      const meta = clone.querySelector('[data-meta]');
+
+      const statusName = normalizeRelation(pet.status)?.name || '';
+      if (status) {
+        if (statusName && String(statusName).trim().toLowerCase() !== 'disponible') {
+          status.textContent = formatStatusLabel(statusName);
+          status.classList.toggle('is-adopted', String(statusName).trim().toLowerCase() === 'adoptado');
+        } else {
+          status.remove();
+        }
+      }
+
+      if (image) {
+        image.src = getMainImage(pet, index);
+        image.alt = pet.name ? `${pet.name} ${imageAltSuffix}` : 'Mascota';
+      }
+
+      if (name) {
+        name.textContent = pet.name || 'Mascota';
+      }
+
+      if (meta) {
+        meta.textContent = buildMeta(pet);
+      }
+
+      if (sex) {
+        const sexInfo = getSexMarkup(pet.sex);
+        if (sexInfo.className) {
+          sex.classList.add(sexInfo.className);
+          sex.innerHTML = sexInfo.html;
+          sex.setAttribute('aria-label', sexInfo.label);
+        } else {
+          sex.remove();
+        }
+      }
+
+      if (card) {
+        card.setAttribute('role', 'link');
+        card.tabIndex = 0;
+
+        const goToDetail = () => {
+          window.location.href = `card.html?id=${pet.id}`;
+        };
+
+        card.addEventListener('click', goToDetail);
+        card.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            goToDetail();
+          }
+        });
+      }
+
+      gridElement.appendChild(clone);
+    });
   }
 
   function setEmptyState(visible) {
@@ -177,76 +255,8 @@
   }
 
   function renderCards() {
-    if (!elements.grid || !elements.template) return;
-
-    elements.grid.innerHTML = '';
-
     const pageRows = getCurrentPageRows();
-
-    pageRows.forEach((favorite, index) => {
-      const pet = favorite.pet;
-      if (!pet) return;
-
-      const clone = elements.template.content.cloneNode(true);
-      const card = clone.querySelector('.card-mascota');
-      const status = clone.querySelector('[data-status]');
-      const image = clone.querySelector('[data-image]');
-      const name = clone.querySelector('[data-name]');
-      const sex = clone.querySelector('[data-sex]');
-      const meta = clone.querySelector('[data-meta]');
-
-      const statusName = normalizeRelation(pet.status)?.name || '';
-      if (status) {
-        if (statusName && String(statusName).trim().toLowerCase() !== 'disponible') {
-          status.textContent = statusName;
-        } else {
-          status.remove();
-        }
-      }
-
-      if (image) {
-        image.src = getMainImage(pet, index);
-        image.alt = pet.name ? `${pet.name} en favoritos` : 'Mascota favorita';
-      }
-
-      if (name) {
-        name.textContent = pet.name || 'Mascota';
-      }
-
-      if (meta) {
-        meta.textContent = buildMeta(pet);
-      }
-
-      if (sex) {
-        const sexInfo = getSexMarkup(pet.sex);
-        if (sexInfo.className) {
-          sex.classList.add(sexInfo.className);
-          sex.innerHTML = sexInfo.html;
-          sex.setAttribute('aria-label', sexInfo.label);
-        } else {
-          sex.remove();
-        }
-      }
-
-      if (card) {
-        card.setAttribute('role', 'link');
-        card.tabIndex = 0;
-
-        const goToDetail = () => {
-          window.location.href = `card.html?id=${pet.id}`;
-        };
-
-        card.addEventListener('click', goToDetail);
-        card.addEventListener('keydown', (event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            goToDetail();
-          }
-        });
-      }
-
-      elements.grid.appendChild(clone);
-    });
+    renderPetCardCollection(pageRows, elements.grid, 'en favoritos');
   }
 
   function renderPagination() {

@@ -11,7 +11,7 @@
   display: grid;
   gap: 16px;
   overflow: hidden;
-  background-image: url("../resources/img/pexels-miami302-16667545.jpg");
+  background-image: url("../resources/img/pexels-snapwire-46024.jpg");
   background-size: cover;
   background-position: center;
   color: var(--white);
@@ -36,9 +36,12 @@
   color: var(--white);
 }
 
+.adopta-hero .title-accent {
+  color: var(--medium-purple);
+}
+
 .adopta-hero p {
   max-width: 640px;
-  color: #f0e9ff;
   font-weight: 400;
 }
 
@@ -110,6 +113,11 @@
   border-radius: 999px;
   font-size: 11px;
   font-weight: 600;
+}
+
+.card-badge.is-adopted {
+  color: #338111;
+  background: #e9f3ea;
 }
 
 .card-media {

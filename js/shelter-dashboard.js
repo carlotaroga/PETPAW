@@ -122,12 +122,24 @@
     }
   }
 
+  function isHiddenShelterStatus(statusName) {
+    const normalized = helpers
+      .normalizeText(statusName)
+      .toLowerCase()
+      .replaceAll('_', ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    return normalized === 'en proceso';
+  }
+
   function getStatusName(pet) {
-    return pet?.status?.name || 'Sin estado';
+    const statusName = pet?.status?.name || '';
+    return isHiddenShelterStatus(statusName) ? '' : statusName || 'Sin estado';
   }
 
   function getSizeName(pet) {
-    return pet?.sizes?.name || 'Sin tamano';
+    return pet?.sizes?.name || 'Sin tamaño';
   }
 
   function getSpeciesName(pet) {
@@ -229,7 +241,7 @@
   function setSummary() {
     const total = state.pets.length;
     const adopted = state.pets.filter((pet) => {
-      const statusName = helpers.normalizeText(normalizeRelation(pet?.status)?.name);
+      const statusName = helpers.normalizeText(pet?.status?.name);
       return statusName.toLowerCase() === 'adoptado';
     }).length;
 
@@ -244,7 +256,7 @@
 
     if (elements.shelterMeta) {
       const address = helpers.normalizeText(state.shelter?.address);
-      elements.shelterMeta.textContent = address || 'Sin ubicacion registrada';
+      elements.shelterMeta.textContent = address || 'Sin ubicación registrada';
     }
 
     if (elements.managerName) {
@@ -256,7 +268,7 @@
     }
 
     if (elements.managerPhone) {
-      elements.managerPhone.textContent = helpers.normalizeText(state.profile?.phone || state.shelter?.phone) || 'Sin telefono';
+      elements.managerPhone.textContent = helpers.normalizeText(state.profile?.phone || state.shelter?.phone) || 'Sin teléfono';
     }
   }
 
@@ -272,7 +284,7 @@
   }
 
   function renderCatalogs() {
-    renderSelect(elements.petSize, state.catalogs.sizes, 'Selecciona un tamano');
+    renderSelect(elements.petSize, state.catalogs.sizes, 'Selecciona un tamaño');
     renderSelect(elements.petStatus, state.catalogs.statuses, 'Selecciona un estado');
     renderSelect(elements.petSpecies, state.catalogs.species, 'Selecciona una especie');
   }
@@ -290,7 +302,7 @@
     }
 
     const cards = state.pets.map((pet) => {
-      const description = helpers.normalizeText(pet.description) || 'Sin descripcion.';
+      const description = helpers.normalizeText(pet.description) || 'Sin descripción.';
       const breed = helpers.normalizeText(pet.breed) || 'Sin raza';
 
       return `
@@ -314,9 +326,9 @@
           </div>
 
           <div class="pet-card-tags">
-            <span class="pet-tag">${escapeHtml(getStatusName(pet))}</span>
+            ${getStatusName(pet) ? `<span class="pet-tag">${escapeHtml(getStatusName(pet))}</span>` : ''}
             <span class="pet-tag">${escapeHtml(getSizeName(pet))}</span>
-            <span class="pet-tag">${Number.isFinite(pet.age) ? `${pet.age} anos` : 'Edad no indicada'}</span>
+            <span class="pet-tag">${Number.isFinite(pet.age) ? `${pet.age} años` : 'Edad no indicada'}</span>
             <span class="pet-tag">${getImageCount(pet)} fotos</span>
           </div>
 
@@ -514,7 +526,7 @@
     if (speciesResult.error) throw speciesResult.error;
 
     state.catalogs.sizes = sizesResult.data || [];
-    state.catalogs.statuses = statusesResult.data || [];
+    state.catalogs.statuses = (statusesResult.data || []).filter((status) => !isHiddenShelterStatus(status?.name));
     state.catalogs.species = speciesResult.data || [];
   }
 
@@ -580,7 +592,7 @@
     }
 
     if (!Number.isInteger(sizeId) || sizeId <= 0) {
-      throw new Error('Selecciona un tamano.');
+      throw new Error('Selecciona un tamaño.');
     }
 
     if (!Number.isInteger(statusId) || statusId <= 0) {
@@ -831,7 +843,7 @@
   async function logout() {
     const { error } = await supabaseClient.auth.signOut();
     if (error) {
-      showDashboardState(error.message || 'No se pudo cerrar sesion.', 'error');
+      showDashboardState(error.message || 'No se pudo cerrar sesión.', 'error');
       return;
     }
 

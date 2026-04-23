@@ -190,7 +190,7 @@
         window.location.replace(helpers.resolvePostLoginTarget(profile.role, redirectTarget));
       }
     } catch (error) {
-      console.error('[PETPAW] Error leyendo sesion:', error.message);
+      console.error('[PETPAW] Error leyendo sesión:', error.message);
     }
   }
 
@@ -298,7 +298,7 @@
     }
 
     if (password.length < 6) {
-      showMessage('La contrasena debe tener al menos 6 caracteres.', 'error');
+      showMessage('La contraseña debe tener al menos 6 caracteres.', 'error');
       return;
     }
 
@@ -343,7 +343,7 @@
       }
 
       if (Array.isArray(authUser.identities) && authUser.identities.length === 0) {
-        showMessage('Este email ya esta registrado. Inicia sesion para continuar.', 'error');
+        showMessage('Este email ya está registrado. Inicia sesión para continuar.', 'error');
         return;
       }
 
@@ -366,7 +366,7 @@
 
       if (data.session?.user) {
         if (!syncProfile.ok) {
-          showMessage('Cuenta creada. Aviso: no se pudo guardar el perfil completo ahora mismo, pero podras iniciar sesion.', 'success');
+          showMessage('Cuenta creada. Aviso: no se pudo guardar el perfil completo ahora mismo, pero podrás iniciar sesión.', 'success');
           setTimeout(() => {
             window.location.href = helpers.resolvePostLoginTarget(shelterMode ? 'shelter' : 'client', redirectTarget);
           }, 900);
@@ -379,9 +379,9 @@
       }
 
       if (!syncProfile.ok) {
-        showMessage('Cuenta creada. Revisa tu email para confirmar y luego inicia sesion. El perfil terminara de sincronizarse al acceder.', 'success');
+        showMessage('Cuenta creada. Revisa tu email para confirmar y luego inicia sesión. El perfil terminará de sincronizarse al acceder.', 'success');
       } else {
-        showMessage('Cuenta creada. Revisa tu email para confirmar el registro y luego inicia sesion.', 'success');
+        showMessage('Cuenta creada. Revisa tu email para confirmar el registro y luego inicia sesión.', 'success');
       }
 
       setTimeout(() => {

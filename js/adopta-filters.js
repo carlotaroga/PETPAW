@@ -61,6 +61,12 @@ function normalizeText(value) {
   return String(value ?? '').trim().toLowerCase()
 }
 
+function formatStatusLabel(statusName) {
+  const normalized = normalizeText(statusName)
+  if (normalized === 'adoptado') return 'Adoptado'
+  return String(statusName ?? '').trim()
+}
+
 function buildMapById(rows) {
   return rows.reduce((acc, row) => {
     acc[row.id] = row
@@ -112,6 +118,16 @@ async function loadPetsData() {
   const sheltersById = buildMapById(shelters)
   const communitiesById = buildMapById(communities)
   const provincesById = buildMapById(provinces)
+  const shelterCommunityIds = new Set(
+    shelters
+      .map((shelter) => safeNumber(shelter?.community_id))
+      .filter((value) => Number.isInteger(value) && value > 0)
+  )
+  const shelterProvinceIds = new Set(
+    shelters
+      .map((shelter) => safeNumber(shelter?.province_id))
+      .filter((value) => Number.isInteger(value) && value > 0)
+  )
 
   const enrichedPets = pets.map((pet) => {
     const shelter = sheltersById[pet.shelter_id] ?? null
@@ -120,7 +136,7 @@ async function loadPetsData() {
 
     return {
       ...pet,
-      status_name: statusesById[pet.status_id]?.name ?? '',
+      status_name: formatStatusLabel(statusesById[pet.status_id]?.name ?? ''),
       size_name: sizesById[pet.size_id]?.name ?? '',
       species_name: speciesById[pet.species_id]?.name ?? '',
       community_id: communityId,
@@ -133,8 +149,12 @@ async function loadPetsData() {
   return {
     pets: enrichedPets,
     lookups: {
-      communities: [...communities].sort(compareByName),
-      provinces: [...provinces].sort(compareByName),
+      communities: communities
+        .filter((community) => shelterCommunityIds.has(community.id))
+        .sort(compareByName),
+      provinces: provinces
+        .filter((province) => shelterProvinceIds.has(province.id))
+        .sort(compareByName),
       species: [...species].sort(compareByName),
       sizes: [...sizes].sort(compareByName)
     }
@@ -142,8 +162,8 @@ async function loadPetsData() {
 }
 
 function buildMeta(pet) {
-  const ageLabel = Number.isFinite(pet.age) ? `${pet.age} anos` : 'Edad desconocida'
-  const sizeLabel = pet.size_name || 'Tamano sin definir'
+  const ageLabel = Number.isFinite(pet.age) ? `${pet.age} años` : 'Edad desconocida'
+  const sizeLabel = pet.size_name || 'Tamaño sin definir'
   const breedLabel = pet.breed || 'Raza sin definir'
 
   return `${ageLabel} - ${sizeLabel} - ${breedLabel}`
@@ -194,6 +214,7 @@ function renderPets(pets) {
       const status = pet.status_name
       if (status && String(status).trim().toLowerCase() !== 'disponible') {
         badge.textContent = status
+        badge.classList.toggle('is-adopted', String(status).trim().toLowerCase() === 'adoptado')
       } else {
         badge.remove()
       }
@@ -309,7 +330,7 @@ function renderPagination(totalItems) {
   pagination.appendChild(
     createPaginationButton('<', currentPage - 1, {
       isDisabled: currentPage === 1,
-      ariaLabel: 'Pagina anterior'
+      ariaLabel: 'Página anterior'
     })
   )
 
@@ -317,7 +338,7 @@ function renderPagination(totalItems) {
     pagination.appendChild(
       createPaginationButton(String(page), page, {
         isActive: page === currentPage,
-        ariaLabel: `Ir a la pagina ${page}`
+        ariaLabel: `Ir a la página ${page}`
       })
     )
   }
@@ -325,7 +346,7 @@ function renderPagination(totalItems) {
   pagination.appendChild(
     createPaginationButton('>', currentPage + 1, {
       isDisabled: currentPage === totalPages,
-      ariaLabel: 'Pagina siguiente'
+      ariaLabel: 'Página siguiente'
     })
   )
 }
@@ -435,9 +456,9 @@ function populateBaseFilters() {
   const speciesOptions = lookups.species.map((item) => ({ value: item.id, label: item.name }))
   const sizeOptions = lookups.sizes.map((item) => ({ value: item.id, label: item.name }))
 
-  setSelectOptions(filterElements.comunidad, communityOptions, 'Comunidad autonoma')
+  setSelectOptions(filterElements.comunidad, communityOptions, 'Comunidad autónoma')
   setSelectOptions(filterElements.especie, speciesOptions, 'Especie')
-  setSelectOptions(filterElements.tamano, sizeOptions, 'Tamano')
+  setSelectOptions(filterElements.tamano, sizeOptions, 'Tamaño')
 
   updateProvinceOptions()
   updateBreedOptions()

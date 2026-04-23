@@ -141,7 +141,7 @@
             </label>
 
             <label class="petpaw-profile-field">
-              <span>Telefono</span>
+              <span>Teléfono</span>
               <input type="tel" maxlength="40" autocomplete="tel" data-profile-phone />
             </label>
 
@@ -152,20 +152,20 @@
           </div>
 
           <div class="petpaw-profile-password-block">
-            <p class="petpaw-profile-section-title">Cambiar contrasena</p>
+            <p class="petpaw-profile-section-title">Cambiar contraseña</p>
             <div class="petpaw-profile-grid">
               <label class="petpaw-profile-field">
-                <span>Nueva contrasena</span>
+                <span>Nueva contraseña</span>
                 <input type="password" minlength="6" autocomplete="new-password" data-profile-password />
               </label>
 
               <label class="petpaw-profile-field">
-                <span>Repite la contrasena</span>
+                <span>Repite la contraseña</span>
                 <input type="password" minlength="6" autocomplete="new-password" data-profile-password-confirm />
               </label>
             </div>
             <p class="petpaw-profile-help">
-              Deja ambos campos vacios si no quieres cambiar la contrasena.
+              Deja ambos campos vacíos si no quieres cambiar la contraseña.
             </p>
           </div>
 
@@ -236,12 +236,12 @@
 
     if (password || passwordConfirm) {
       if (password.length < 6) {
-        setProfileFormState('La contrasena debe tener al menos 6 caracteres.', true, false);
+        setProfileFormState('La contraseña debe tener al menos 6 caracteres.', true, false);
         return;
       }
 
       if (password !== passwordConfirm) {
-        setProfileFormState('Las contrasenas no coinciden.', true, false);
+        setProfileFormState('Las contraseñas no coinciden.', true, false);
         return;
       }
     }
@@ -257,7 +257,7 @@
 
       const authUser = authData?.user;
       if (!authUser) {
-        throw new Error('Tu sesion ha caducado. Inicia sesion de nuevo.');
+        throw new Error('Tu sesión ha caducado. Inicia sesión de nuevo.');
       }
 
       const authPayload = {
@@ -314,7 +314,7 @@
       const successMessage = emailChanged
         ? 'Perfil actualizado. Revisa tu email para confirmar el cambio de correo.'
         : passwordChanged
-          ? 'Perfil y contrasena actualizados correctamente.'
+          ? 'Perfil y contraseña actualizados correctamente.'
           : 'Perfil actualizado correctamente.';
 
       setProfileFormState(successMessage, false, true);
@@ -350,7 +350,7 @@
     const { error } = await supabaseClient.auth.signOut();
 
     if (error) {
-      console.error('[PETPAW] Error al cerrar sesion:', error.message);
+      console.error('[PETPAW] Error al cerrar sesión:', error.message);
       return;
     }
 
@@ -361,7 +361,7 @@
   function renderLoggedOut(slot) {
     slot.innerHTML = `
       <div class="navbar-auth-guest">
-        <a class="btn btn-outline-dark navbar-auth-btn" href="login.html">Iniciar sesion</a>
+        <a class="btn btn-outline-dark navbar-auth-btn" href="login.html">Iniciar sesión</a>
         <a class="btn btn-dark navbar-auth-btn" href="signup.html">Registrarse</a>
       </div>
     `;
@@ -420,7 +420,7 @@
                 <i class="bi bi-chevron-right"></i>
               </a>
               <button class="navbar-dropdown-item navbar-dropdown-item-logout" type="button" data-action="logout">
-                <span><i class="bi bi-box-arrow-right"></i> Cerrar sesion</span>
+                <span><i class="bi bi-box-arrow-right"></i> Cerrar sesión</span>
                 <i class="bi bi-chevron-right"></i>
               </button>
             </div>

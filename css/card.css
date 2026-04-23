@@ -199,6 +199,12 @@
   padding: 13px 20px;
 }
 
+.pet-action-primary:disabled {
+  background: #d6d0e7;
+  color: #6f6883;
+  cursor: not-allowed;
+}
+
 .pet-action-fav {
   border: 1px solid #dfdfdf;
   border-radius: 12px;
@@ -310,12 +316,12 @@
   }
 
   .pet-slider-wrap {
-    grid-template-columns: 30px minmax(0, 1fr) 30px;
+    grid-template-columns: 24px minmax(0, 1fr) 24px;
     gap: 8px;
   }
 
   .slider-frame img {
-    height: 360px;
+    height: auto;
   }
 
   .pet-name {
@@ -358,6 +364,11 @@
   font-size: 13px;
   font-weight: 600;
   margin: 0 0 8px;
+}
+
+.pet-status.is-adopted {
+  color: #338111;
+  background: #e9f3ea;
 }
 
 .pet-status.is-empty {

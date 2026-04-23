@@ -87,6 +87,7 @@ const elements = {
   shelterName: document.getElementById('shelter-name'),
   shelterData: document.getElementById('shelter-data'),
   shelterEmail: document.getElementById('shelter-email'),
+  adoptionButton: document.getElementById('openAdoptionModalBtn'),
   favoriteButton: document.querySelector('.pet-action-fav'),
   favoriteIcon: document.querySelector('.pet-action-fav i')
 }
@@ -112,6 +113,12 @@ function normalizeRelation(value) {
   if (!value) return null
   if (Array.isArray(value)) return value[0] ?? null
   return value
+}
+
+function formatStatusLabel(statusName) {
+  const normalized = String(statusName || '').trim().toLowerCase()
+  if (normalized === 'adoptado') return 'Adoptado'
+  return String(statusName || '').trim()
 }
 
 function showState(message, isError = false) {
@@ -175,6 +182,22 @@ function shouldShowStatusBadge(statusName) {
   return String(statusName || '').trim().toLowerCase() === 'adoptado'
 }
 
+function isAdoptedStatus(statusName) {
+  return String(statusName || '').trim().toLowerCase() === 'adoptado'
+}
+
+function updateAdoptionButton(statusName) {
+  if (!elements.adoptionButton) return
+
+  const isAdopted = isAdoptedStatus(statusName)
+  elements.adoptionButton.disabled = isAdopted
+  elements.adoptionButton.textContent = isAdopted ? 'Mascota adoptada' : 'Solicitar adopción'
+  elements.adoptionButton.setAttribute(
+    'aria-label',
+    isAdopted ? 'Mascota adoptada, no disponible para solicitar adopción' : 'Solicitar adopción'
+  )
+}
+
 function setFavoriteVisual(isFavorite) {
   favoriteState.isFavorite = Boolean(isFavorite)
 
@@ -183,7 +206,7 @@ function setFavoriteVisual(isFavorite) {
   elements.favoriteButton.classList.toggle('is-active', favoriteState.isFavorite)
   elements.favoriteButton.setAttribute(
     'aria-label',
-    favoriteState.isFavorite ? 'Quitar de favoritos' : 'Anadir a favoritos'
+    favoriteState.isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'
   )
 
   if (elements.favoriteIcon) {
@@ -271,7 +294,7 @@ async function fetchFavoriteRow(userId, petId) {
 
 async function insertFavoriteRow(userId, petId) {
   if (!supabaseClient) {
-    throw new Error('Supabase no esta disponible.')
+    throw new Error('Supabase no está disponible.')
   }
 
   const { data, error } = await supabaseClient
@@ -335,12 +358,12 @@ async function handleFavoriteClick(event) {
   event.preventDefault()
 
   if (!favoriteState.petId) {
-    showTransientState('No se encontro la mascota para guardar en favoritos.', true)
+    showTransientState('No se encontró la mascota para guardar en favoritos.', true)
     return
   }
 
   if (!supabaseClient) {
-    showTransientState('Supabase no esta disponible en esta pagina.', true)
+    showTransientState('Supabase no está disponible en esta página.', true)
     return
   }
 
@@ -352,7 +375,7 @@ async function handleFavoriteClick(event) {
     favoriteState.user = await resolveCurrentUser()
   } catch (error) {
     console.error('[PETPAW] Error obteniendo usuario autenticado:', error.message)
-    showTransientState('No se pudo validar tu sesion.', true)
+    showTransientState('No se pudo validar tu sesión.', true)
     return
   }
 
@@ -376,7 +399,7 @@ async function handleFavoriteClick(event) {
         showTransientState('Esta mascota ya estaba en favoritos.')
       } else {
         setFavoriteVisual(true)
-        showTransientState('Mascota anadida a favoritos.')
+        showTransientState('Mascota añadida a favoritos.')
       }
     }
   } catch (error) {
@@ -540,7 +563,7 @@ async function fetchShelterLocationNames(shelter) {
 function renderPet(pet, provinceName, communityName) {
   const petName = pet?.name || 'Mascota'
   const sexLabel = formatSexLabel(pet?.sex)
-  const sizeName = normalizeRelation(pet?.sizes)?.name || 'Sin tamano'
+  const sizeName = normalizeRelation(pet?.sizes)?.name || 'Sin tamaño'
   const statusName = normalizeRelation(pet?.status)?.name || ''
   const shelter = normalizeRelation(pet?.shelters)
 
@@ -553,14 +576,17 @@ function renderPet(pet, provinceName, communityName) {
   if (elements.sex) elements.sex.textContent = sexLabel
   if (elements.size) elements.size.textContent = sizeName
   if (elements.description) {
-    elements.description.textContent = pet?.description || 'Sin descripcion disponible.'
+    elements.description.textContent = pet?.description || 'Sin descripción disponible.'
   }
 
   if (elements.status) {
     const showStatus = shouldShowStatusBadge(statusName)
-    elements.status.textContent = showStatus ? statusName : ''
+    elements.status.textContent = showStatus ? formatStatusLabel(statusName) : ''
     elements.status.classList.toggle('is-empty', !showStatus)
+    elements.status.classList.toggle('is-adopted', showStatus && isAdoptedStatus(statusName))
   }
+
+  updateAdoptionButton(statusName)
 
   setGenderIcon(pet?.sex)
 
@@ -572,7 +598,7 @@ function renderPet(pet, provinceName, communityName) {
   }
 
   if (elements.shelterData) {
-    elements.shelterData.textContent = locationParts.length ? locationParts.join(', ') : 'Ubicacion no disponible'
+    elements.shelterData.textContent = locationParts.length ? locationParts.join(', ') : 'Ubicación no disponible'
   }
 
   if (elements.shelterEmail) {
@@ -601,7 +627,7 @@ async function initPetCard() {
   wireAuthStateWatcher()
 
   if (!supabaseClient) {
-    showState('No se pudo inicializar Supabase en esta pagina.', true)
+    showState('No se pudo inicializar Supabase en esta página.', true)
     setFavoriteEnabled(false)
     return
   }
@@ -610,7 +636,7 @@ async function initPetCard() {
   favoriteState.petId = petId
 
   if (!petId) {
-    showState('No se ha indicado una mascota valida en la URL.', true)
+    showState('No se ha indicado una mascota válida en la URL.', true)
     setSliderImages([], 'Mascota')
     setFavoriteEnabled(false)
     return
@@ -624,7 +650,7 @@ async function initPetCard() {
     const pet = await fetchPetById(petId)
 
     if (!pet) {
-      showState('No se encontro la mascota solicitada.', true)
+      showState('No se encontró la mascota solicitada.', true)
       setSliderImages([], 'Mascota')
       setFavoriteEnabled(false)
       return
@@ -659,6 +685,12 @@ function initAdoptionModal() {
   const adoptionModal = adoptionModalElement ? new bootstrap.Modal(adoptionModalElement) : null
 
   openAdoptionModalBtn?.addEventListener('click', async () => {
+    if (isAdoptedStatus(adoptionState.currentPet?.status?.name)) {
+      adoptionFormState.textContent = 'Esta mascota ya ha sido adoptada.'
+      adoptionFormState.className = 'small mt-3 text-danger'
+      return
+    }
+
     const { data, error } = await supabaseClient.auth.getUser()
 
     if (error || !data?.user) {
@@ -698,6 +730,12 @@ function initAdoptionModal() {
       return
     }
 
+    if (isAdoptedStatus(adoptionState.currentPet?.status?.name)) {
+      adoptionFormState.textContent = 'Esta mascota ya ha sido adoptada.'
+      adoptionFormState.className = 'small mt-3 text-danger'
+      return
+    }
+
     if (adoptionState.isSubmitting) return
 
     try {
@@ -730,7 +768,7 @@ function initAdoptionModal() {
 
       const accessToken = await getCurrentAccessToken()
       if (!accessToken) {
-        throw new Error('No se ha encontrado una sesion valida para enviar la solicitud.')
+        throw new Error('No se ha encontrado una sesión válida para enviar la solicitud.')
       }
 
       const { error: functionError } = await supabaseClient.functions.invoke(

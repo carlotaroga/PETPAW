@@ -21,11 +21,11 @@
     const message = String(error.message || '').toLowerCase();
 
     if (message.includes('invalid login credentials')) {
-      return 'Email o contrasena incorrectos.';
+      return 'Email o contraseña incorrectos.';
     }
 
     if (message.includes('email not confirmed')) {
-      return 'Debes confirmar tu email antes de iniciar sesion.';
+      return 'Debes confirmar tu email antes de iniciar sesión.';
     }
 
     if (message.includes('user already registered')) {
@@ -33,7 +33,7 @@
     }
 
     if (message.includes('password should be at least')) {
-      return 'La contrasena es demasiado corta.';
+      return 'La contraseña es demasiado corta.';
     }
 
     if (message.includes('failed to fetch')) {

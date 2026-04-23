@@ -64,7 +64,7 @@
       const destination = helpers.resolvePostLoginTarget(profile.role, requestedRedirect);
       window.location.replace(destination);
     } catch (error) {
-      console.error('[PETPAW] Error leyendo sesion:', error.message);
+      console.error('[PETPAW] Error leyendo sesión:', error.message);
     }
   }
 
@@ -88,7 +88,7 @@
     const password = passwordInput?.value || '';
 
     if (!email || !password) {
-      showMessage('Completa email y contrasena.', 'error');
+      showMessage('Completa email y contraseña.', 'error');
       return;
     }
 
@@ -107,7 +107,7 @@
         const syncProfile = await helpers.ensureUserProfile(supabaseClient, authUser);
         if (!syncProfile.ok) {
           console.error('[PETPAW] No se pudo sincronizar perfil:', syncProfile.error?.message || syncProfile.reason);
-          showMessage('Sesion iniciada. Aviso: no se pudo sincronizar el perfil en users, revisa RLS.', 'success');
+          showMessage('Sesión iniciada. Aviso: no se pudo sincronizar el perfil en users, revisa RLS.', 'success');
           setTimeout(() => {
             redirectAfterLogin(authUser);
           }, 900);
@@ -115,7 +115,7 @@
         }
       }
 
-      showMessage('Sesion iniciada correctamente. Redirigiendo...', 'success');
+      showMessage('Sesión iniciada correctamente. Redirigiendo...', 'success');
       await redirectAfterLogin(authUser);
     } catch (error) {
       showMessage(helpers.formatAuthError(error), 'error');
