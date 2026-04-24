@@ -1,4 +1,4 @@
-/* Renderiza la navbar según la sesión y gestiona el perfil del usuario. */
+﻿/* Renderiza la navbar segÃºn la sesiÃ³n y gestiona el perfil del usuario. */
 (function initNavbarUser() {
   const helpers = window.PETPAW_AUTH;
   if (!helpers) {
@@ -14,7 +14,7 @@
     return;
   }
 
-  /* Rutas y estado temporal del menú y del modal de perfil. */
+  /* Rutas y estado temporal del menÃº y del modal de perfil. */
   const favoritesHref = 'favoritos.html';
   const shelterDashboardHref = 'shelter-dashboard.html';
   const currentPath = window.location.pathname.toLowerCase();
@@ -23,7 +23,6 @@
   const isHomePage = currentPath.endsWith('/index.html') || currentPath.endsWith('index.html') || currentPath.endsWith('/');
   let currentOpenMenu = null;
   let currentProfileModal = null;
-  let currentProfileData = null;
 
   /* Utilidades de formato para pintar datos del usuario sin riesgos. */
   function escapeHtml(value) {
@@ -63,7 +62,7 @@
     return 'PP';
   }
 
-  /* Abre y cierra el dropdown del perfil en desktop o móvil. */
+  /* Abre y cierra el dropdown del perfil en desktop o mÃ³vil. */
   function closeMenu() {
     if (!currentOpenMenu) return;
 
@@ -80,33 +79,7 @@
     currentProfileModal.hidden = true;
     document.body.classList.remove('petpaw-modal-open');
   }
-
-  function setProfileFormState(message, isError = false, isSuccess = false) {
-    if (!currentProfileModal) return;
-
-    const stateNode = currentProfileModal.querySelector('[data-profile-form-state]');
-    if (!stateNode) return;
-
-    stateNode.textContent = message;
-    stateNode.classList.toggle('is-error', isError);
-    stateNode.classList.toggle('is-success', isSuccess);
-  }
-
-  function setProfileFormLoading(isLoading) {
-    if (!currentProfileModal) return;
-
-    const submitButton = currentProfileModal.querySelector('[data-profile-submit]');
-    if (!submitButton) return;
-
-    if (!submitButton.dataset.defaultText) {
-      submitButton.dataset.defaultText = submitButton.textContent || 'Guardar cambios';
-    }
-
-    submitButton.disabled = isLoading;
-    submitButton.textContent = isLoading ? 'Guardando...' : submitButton.dataset.defaultText;
-  }
-
-  /* Crea una sola vez el modal donde el usuario edita su cuenta. */
+  /* Crea una sola vez el modal donde el usuario consulta su cuenta. */
   function ensureProfileModal() {
     if (currentProfileModal) {
       return currentProfileModal;
@@ -128,59 +101,38 @@
           </button>
         </div>
 
-        <form class="petpaw-profile-form" data-profile-form novalidate>
+        <div class="petpaw-profile-form">
           <div class="petpaw-profile-grid">
-            <label class="petpaw-profile-field">
+            <div class="petpaw-profile-field">
               <span>Nombre</span>
-              <input type="text" maxlength="120" autocomplete="given-name" data-profile-name required />
-            </label>
-
-            <label class="petpaw-profile-field">
-              <span>Apellidos</span>
-              <input type="text" maxlength="160" autocomplete="family-name" data-profile-surnames />
-            </label>
-
-            <label class="petpaw-profile-field petpaw-profile-field-full">
-              <span>Email</span>
-              <input type="email" maxlength="160" autocomplete="email" data-profile-email required />
-            </label>
-
-            <label class="petpaw-profile-field">
-              <span>Teléfono</span>
-              <input type="tel" maxlength="40" autocomplete="tel" data-profile-phone />
-            </label>
-
-            <label class="petpaw-profile-field">
-              <span>Rol</span>
-              <input type="text" data-profile-role disabled />
-            </label>
-          </div>
-
-          <div class="petpaw-profile-password-block">
-            <p class="petpaw-profile-section-title">Cambiar contraseña</p>
-            <div class="petpaw-profile-grid">
-              <label class="petpaw-profile-field">
-                <span>Nueva contraseña</span>
-                <input type="password" minlength="6" autocomplete="new-password" data-profile-password />
-              </label>
-
-              <label class="petpaw-profile-field">
-                <span>Repite la contraseña</span>
-                <input type="password" minlength="6" autocomplete="new-password" data-profile-password-confirm />
-              </label>
+              <div class="petpaw-profile-value" data-profile-name></div>
             </div>
-            <p class="petpaw-profile-help">
-              Deja ambos campos vacíos si no quieres cambiar la contraseña.
-            </p>
-          </div>
 
-          <p class="petpaw-profile-form-state" data-profile-form-state aria-live="polite"></p>
+            <div class="petpaw-profile-field">
+              <span>Apellidos</span>
+              <div class="petpaw-profile-value" data-profile-surnames></div>
+            </div>
+
+            <div class="petpaw-profile-field petpaw-profile-field-full">
+              <span>Email</span>
+              <div class="petpaw-profile-value" data-profile-email></div>
+            </div>
+
+            <div class="petpaw-profile-field">
+              <span>Teléfono</span>
+              <div class="petpaw-profile-value" data-profile-phone></div>
+            </div>
+
+            <div class="petpaw-profile-field">
+              <span>Rol</span>
+              <div class="petpaw-profile-value" data-profile-role></div>
+            </div>
+          </div>
 
           <div class="petpaw-profile-actions">
-            <button class="btn btn-outline-dark" type="button" data-close-profile-modal>Cancelar</button>
-            <button class="btn btn-dark" type="submit" data-profile-submit>Guardar cambios</button>
+            <button class="btn btn-dark" type="button" data-close-profile-modal>Cerrar</button>
           </div>
-        </form>
+        </div>
       </div>
     `;
 
@@ -193,9 +145,6 @@
       }
     });
 
-    const form = modal.querySelector('[data-profile-form]');
-    form?.addEventListener('submit', handleProfileSubmit);
-
     currentProfileModal = modal;
     return modal;
   }
@@ -203,138 +152,20 @@
   function getRoleLabel(role) {
     return helpers.isShelterRole(role) ? 'Protectora' : 'Usuario';
   }
-
   function openProfileModal(userData) {
     const modal = ensureProfileModal();
-    currentProfileData = userData;
 
-    modal.querySelector('[data-profile-name]').value = helpers.normalizeText(userData?.name);
-    modal.querySelector('[data-profile-surnames]').value = helpers.normalizeText(userData?.surnames);
-    modal.querySelector('[data-profile-email]').value = helpers.normalizeText(userData?.email);
-    modal.querySelector('[data-profile-phone]').value = helpers.normalizeText(userData?.phone);
-    modal.querySelector('[data-profile-role]').value = getRoleLabel(userData?.role);
-    modal.querySelector('[data-profile-password]').value = '';
-    modal.querySelector('[data-profile-password-confirm]').value = '';
-
-    setProfileFormState('');
-    setProfileFormLoading(false);
+    modal.querySelector('[data-profile-name]').textContent =
+      helpers.normalizeText(userData?.name) || 'Sin dato';
+    modal.querySelector('[data-profile-surnames]').textContent =
+      helpers.normalizeText(userData?.surnames) || 'Sin dato';
+    modal.querySelector('[data-profile-email]').textContent =
+      helpers.normalizeText(userData?.email) || 'Sin dato';
+    modal.querySelector('[data-profile-phone]').textContent =
+      helpers.normalizeText(userData?.phone) || 'Sin dato';
+    modal.querySelector('[data-profile-role]').textContent = getRoleLabel(userData?.role);
     modal.hidden = false;
     document.body.classList.add('petpaw-modal-open');
-  }
-
-  /* Guarda cambios de perfil y contraseña desde el modal. */
-  async function handleProfileSubmit(event) {
-    event.preventDefault();
-
-    if (!currentProfileModal || !currentProfileData) return;
-
-    const name = helpers.normalizeText(currentProfileModal.querySelector('[data-profile-name]')?.value);
-    const surnames = helpers.normalizeText(currentProfileModal.querySelector('[data-profile-surnames]')?.value);
-    const email = helpers.normalizeText(currentProfileModal.querySelector('[data-profile-email]')?.value).toLowerCase();
-    const phone = helpers.normalizeText(currentProfileModal.querySelector('[data-profile-phone]')?.value);
-    const password = currentProfileModal.querySelector('[data-profile-password]')?.value || '';
-    const passwordConfirm = currentProfileModal.querySelector('[data-profile-password-confirm]')?.value || '';
-
-    if (!name || !email) {
-      setProfileFormState('Nombre y email son obligatorios.', true, false);
-      return;
-    }
-
-    if (password || passwordConfirm) {
-      if (password.length < 6) {
-        setProfileFormState('La contraseña debe tener al menos 6 caracteres.', true, false);
-        return;
-      }
-
-      if (password !== passwordConfirm) {
-        setProfileFormState('Las contraseñas no coinciden.', true, false);
-        return;
-      }
-    }
-
-    try {
-      setProfileFormLoading(true);
-      setProfileFormState('Guardando cambios...');
-
-      const { data: authData, error: authError } = await supabaseClient.auth.getUser();
-      if (authError) {
-        throw authError;
-      }
-
-      const authUser = authData?.user;
-      if (!authUser) {
-        throw new Error('Tu sesión ha caducado. Inicia sesión de nuevo.');
-      }
-
-      const authPayload = {
-        data: {
-          name,
-          surnames,
-          phone,
-          role: currentProfileData.role,
-          shelter_id: currentProfileData.shelter_id ?? null
-        }
-      };
-
-      if (email && email !== helpers.normalizeText(authUser.email).toLowerCase()) {
-        authPayload.email = email;
-      }
-
-      if (password) {
-        authPayload.password = password;
-      }
-
-      const { data: updatedAuthData, error: updateAuthError } = await supabaseClient.auth.updateUser(authPayload);
-      if (updateAuthError) {
-        throw updateAuthError;
-      }
-
-      const profilePayload = {
-        id: authUser.id,
-        name,
-        surnames,
-        email,
-        phone,
-        role: currentProfileData.role || 'client',
-        shelter_id: currentProfileData.shelter_id ?? null
-      };
-
-      const { error: profileUpdateError } = await supabaseClient
-        .from('users')
-        .upsert(profilePayload, { onConflict: 'id' });
-
-      if (profileUpdateError) {
-        throw profileUpdateError;
-      }
-
-      helpers.savePendingProfile(profilePayload, authUser.id);
-      await helpers.ensureUserProfile(supabaseClient, updatedAuthData?.user || authUser, profilePayload);
-
-      currentProfileData = {
-        ...currentProfileData,
-        ...profilePayload
-      };
-
-      const emailChanged = email !== helpers.normalizeText(authUser.email).toLowerCase();
-      const passwordChanged = Boolean(password);
-      const successMessage = emailChanged
-        ? 'Perfil actualizado. Revisa tu email para confirmar el cambio de correo.'
-        : passwordChanged
-          ? 'Perfil y contraseña actualizados correctamente.'
-          : 'Perfil actualizado correctamente.';
-
-      setProfileFormState(successMessage, false, true);
-      await renderNavbar();
-
-      window.setTimeout(() => {
-        closeProfileModal();
-      }, 1200);
-    } catch (error) {
-      console.error('[PETPAW] Error actualizando perfil:', error);
-      setProfileFormState(helpers.formatAuthError(error), true, false);
-    } finally {
-      setProfileFormLoading(false);
-    }
   }
 
   function toggleMenu(menu, trigger) {
@@ -364,7 +195,7 @@
     await renderNavbar();
   }
 
-  /* Pinta la versión pública o privada de la navbar. */
+  /* Pinta la versiÃ³n pÃºblica o privada de la navbar. */
   function renderLoggedOut(slot) {
     slot.innerHTML = `
       <div class="navbar-auth-guest">
@@ -416,7 +247,7 @@
 
             ${
               userData.profileMissing
-                ? '<p class="navbar-profile-warning">No encontramos tu perfil en la tabla users. Puedes completarlo despues desde Datos personales.</p>'
+                ? '<p class="navbar-profile-warning">No encontramos tu perfil en la tabla users. Contacta con soporte si necesitas actualizar tus datos.</p>'
                 : ''
             }
 
@@ -486,7 +317,7 @@
     }
   }
 
-  /* Lee la sesión actual y sincroniza el perfil si hace falta. */
+  /* Lee la sesiÃ³n actual y sincroniza el perfil si hace falta. */
   async function getUserDataFromSession() {
     return helpers.getCurrentUserProfile(supabaseClient);
   }
@@ -505,7 +336,7 @@
     }
   }
 
-  /* Inserta la navbar correcta y prepara sus eventos de interacción. */
+  /* Inserta la navbar correcta y prepara sus eventos de interacciÃ³n. */
   async function renderNavbar() {
     const slots = Array.from(document.querySelectorAll('[data-navbar-auth]'));
     if (!slots.length) return;
@@ -569,6 +400,7 @@
     enableAdminMode
   };
 
-  /* Espera al DOM para montar el menú en cada página cliente. */
+  /* Espera al DOM para montar el menÃº en cada pÃ¡gina cliente. */
   document.addEventListener('DOMContentLoaded', renderNavbar);
 })();
+

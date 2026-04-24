@@ -507,6 +507,17 @@ h1,
   color: rgba(71, 63, 98, 0.6);
 }
 
+.petpaw-profile-value {
+  min-height: 48px;
+  padding: 12px 14px;
+  border: 1px solid rgba(146, 123, 222, 0.16);
+  border-radius: 14px;
+  background: #fffdff;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+}
+
 .petpaw-profile-password-block {
   padding: 18px;
   border-radius: 18px;
